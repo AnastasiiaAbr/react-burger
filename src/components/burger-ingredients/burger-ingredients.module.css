@@ -1,0 +1,55 @@
+.container {
+  max-width: 600px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.scrollArea {
+  max-height: 756px;
+  overflow-y: scroll;
+  padding-right: 10px;
+  scroll-behavior: smooth;
+}
+
+.category {
+  margin-bottom: 32px;
+}
+
+.categoryItems {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.card {
+  padding: 8px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  box-sizing: border-box;
+  max-width: 272px;
+  position: relative;
+}
+
+.card img {
+  max-width: 100%;
+  height: auto;
+}
+
+.card p {
+  text-align: center;
+  margin: 0;
+}
+
+.counter {
+  top: 8px;
+  right: 8px;
+}
