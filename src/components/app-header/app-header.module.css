@@ -19,3 +19,8 @@ nav {
 .left {
   align-items: center;
 }
+
+.iconWrapper {
+   display: flex;
+   align-items: center;
+}

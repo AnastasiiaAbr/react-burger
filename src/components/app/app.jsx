@@ -1,10 +1,9 @@
-import logo from './logo.svg';
-import './App.css';
-import { API_URL } from './utils/api';
-import AppHeader from './components/app-header/app-header';
-import BurgerIngredients from './components/burger-ingredients/burger-ingredients';
+import styles from './app.module.css';
+import { API_URL } from '../../utils/api';
+import AppHeader from '../app-header/app-header';
+import BurgerIngredients from '../burger-ingredients/burger-ingredients';
 import { useEffect, useState } from 'react';
-import BurgerConstructor from './components/burger-constructor/burger-constructor';
+import BurgerConstructor from '../burger-constructor/burger-constructor';
 
 
 function App() {
@@ -60,13 +59,11 @@ function App() {
 
    return (
       <>
-         <header>
-            <AppHeader className='wrapper'/>
-         </header>
-         <main className='wrapper'>
+            <AppHeader className={styles.wrapper}/>
+         <main className={styles.wrapper}>
             <h1 className="text text_type_main-large mt-10 mb-5">Соберите бургер</h1>
 
-            <section className='content'>
+            <section className={styles.content}>
                <BurgerIngredients
                   ingredients={ingredients}
                   bun={bun}

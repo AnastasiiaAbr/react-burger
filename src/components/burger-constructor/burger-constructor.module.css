@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  width: 100%;
   max-width: 600px;
   gap: 16px;
   margin: 0 auto;
@@ -12,6 +13,7 @@
   justify-content: flex-end;
   align-items: center;
   gap: 40px;
+  width: 100%;
 }
 
 .price {
@@ -25,10 +27,13 @@
   gap: 8px;
   max-height: 400px;
   overflow-y: auto;
+  width: 100%
 }
 
 .ingredient {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
+  justify-content: flex-end;
+  width: 100%;
 }

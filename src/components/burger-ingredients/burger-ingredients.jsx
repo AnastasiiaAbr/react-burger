@@ -5,9 +5,9 @@ import styles from './burger-ingredients.module.css';
 import Modal from "../modal/modal";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import { ingredientPropType } from '../../utils/prop-types/ingredient-prop-types'
+import { useModal } from "../../hooks/useModal";
 
-
-function IngredientCard({ ingredient, count, onClick }) {
+function IngredientCard({ ingredient, count = 0, onClick }) {
   return (
     <div className={styles.card} onClick={() => onClick(ingredient)}>
       {count > 0 && <Counter count={count} size='default' />}
@@ -22,10 +22,6 @@ IngredientCard.propTypes = {
   ingredient: ingredientPropType.isRequired,
   count: PropTypes.number,
   onClick: PropTypes.func.isRequired,
-};
-
-IngredientCard.defaultProps = {
-  count: 0,
 };
 
 function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredientClick}) {
@@ -72,6 +68,8 @@ function BurgerIngredients({ ingredients, bun, fillings, onAddIngredient }) {
   const [currentTab, setCurrentTab] = useState('bun');
   const [selectedIngredient, setSelectedIngredient] = useState(null);
 
+  const {isModalOpen, openModal, closeModal} = useModal();
+
   const bunRef = useRef(null);
   const sauceRef = useRef(null);
   const mainRef = useRef(null);
@@ -93,12 +91,14 @@ function BurgerIngredients({ ingredients, bun, fillings, onAddIngredient }) {
 
   const handleIngredientClick = (ingredient) => {
     setSelectedIngredient(ingredient);
+    openModal();
     onAddIngredient(ingredient);
   };
 
-  const closeModal = () => {
-    setSelectedIngredient(null);
-  };
+  const handleCloseModal = () => {
+  setSelectedIngredient(null);
+  closeModal();
+};
 
   return (
     <>
@@ -118,8 +118,8 @@ function BurgerIngredients({ ingredients, bun, fillings, onAddIngredient }) {
         </div>
       </div >
 
-      {selectedIngredient && (
-        <Modal title='Детали ингредиента' onClose={closeModal} closeStyle='inline'>
+      {isModalOpen && selectedIngredient && (
+        <Modal title='Детали ингредиента' onClose={handleCloseModal} closeStyle='inline'>
           <IngredientDetails ingredient={selectedIngredient} />
         </Modal>
       )}

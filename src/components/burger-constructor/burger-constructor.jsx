@@ -5,22 +5,18 @@ import styles from './burger-constructor.module.css';
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
 import { ingredientPropType } from '../../utils/prop-types/ingredient-prop-types';
+import { useModal } from '../../hooks/useModal';
 
 function BurgerConstructor({ bun, fillings, onRemoveIngredient }) {
   const [orderId, setOrderId] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isModalOpen, openModal, closeModal } = useModal();
 
   const totalPrice = (bun ? bun.price * 2 : 0) + fillings.reduce((sum, item) => sum + item.price, 0);
 
   const handleOrderClick = () => {
     setOrderId(34536);
-    setIsModalOpen(true);
+    openModal();
   };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setOrderId(null);
-  }
 
   return (
     <div className={styles.container}>
@@ -75,7 +71,7 @@ function BurgerConstructor({ bun, fillings, onRemoveIngredient }) {
             <span className="text text_type_digits-medium">{totalPrice}</span>
             <CurrencyIcon type='primary' />
           </div>
-          <Button type='primary' size='large' onClick={handleOrderClick}>
+          <Button htmlType="button" type='primary' size='large' onClick={handleOrderClick}>
             Оформить заказ
           </Button>
         </div>
