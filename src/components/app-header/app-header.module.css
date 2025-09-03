@@ -1,0 +1,26 @@
+nav {
+  display: flex;
+  background-color: #1C1C21;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left, 
+.right {
+  display: flex;
+  flex: 1;
+  justify-content: center
+}
+
+.right {
+  align-items: flex-end;
+}
+
+.left {
+  align-items: center;
+}
+
+.iconWrapper {
+   display: flex;
+   align-items: center;
+}
