@@ -10,7 +10,7 @@ import styles from './app-header.module.css'
 
 const HeaderItem = ({ icon: IconComponent, text, active = false }) => {
   return (
-    <div className={`mt-4 mb-4 pl-5 pr-5' ${styles.iconWrapper}`}>
+    <div className={`mt-4 mb-4 pl-5 pr-5 ${styles.iconWrapper}`}>
       <IconComponent type={active ? "primary" : "secondary"} />
       <span className={`text text_type_main-small ml-2 ${active ? "text_color_primary" : "text_color_inactive"}`}>
         {text}
