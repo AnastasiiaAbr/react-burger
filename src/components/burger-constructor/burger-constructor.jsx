@@ -8,7 +8,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { selectConstructorBun, selectConstructorFillings, removeFilling, setBun, addFilling, moveFilling
+import { selectConstructorBun, selectConstructorFillings, removeFilling, setBun, addFilling, moveFilling, clearConstructor
 } from '../../services/constructorSlice';
 import { createOrder, selectCurrentOrder, selectOrderLoading } from '../../services/orderSlice';
 
@@ -51,7 +51,7 @@ function FillingCard({ ingredient, index, moveCard, onRemove }) {
         text={ingredient.name}
         price={ingredient.price}
         thumbnail={ingredient.image}
-        handleClose={() => onRemove(ingredient._id)}
+        handleClose={() => onRemove(ingredient._uniqueId)}
       />
     </div>
   );
@@ -99,8 +99,8 @@ export default function BurgerConstructor() {
       return;
     }
     const ingredientsIds = [
-      bun._idAPI,
-      ...fillings.map(item => item._idAPI)
+      bun._id,
+      ...fillings.map(item => item._id)
     ];
 
     dispatch(createOrder(ingredientsIds));
@@ -109,6 +109,7 @@ export default function BurgerConstructor() {
   useEffect(() => {
     if (order) {
       openModal();
+      dispatch(clearConstructor());
     }
   }, [order, openModal]);
 
@@ -128,7 +129,7 @@ export default function BurgerConstructor() {
         {fillings.length > 0
           ? fillings.map((item, index) => (
             <FillingCard
-              key={item._id}
+              key={item._uniqueId}
               ingredient={item}
               index={index}
               moveCard={(from, to) => dispatch(moveFilling({ sourceIndex: from, targetIndex: to }))}

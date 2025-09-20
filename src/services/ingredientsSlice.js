@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { API_INGREDIENTS } from "../utils/api";
+import { API } from "../utils/api";
+import { request } from "../utils/checkResponse";
 
 const initialState = {
   items: [],
@@ -35,9 +36,8 @@ export const {
 export const fetchIngredients = () => async (dispatch) => {
   dispatch(getIngredients());
   try {
-    const res = await fetch(API_INGREDIENTS);
-    if (!res.ok) throw new Error (`Ошибка ${res.status}`);
-    const data = await res.json();
+    const data = await request(API.INGREDIENTS);
+
     dispatch(getIngredientsSuccess(data.data));
   } catch (err) {
     dispatch(getIngredientsFailed(err.message));

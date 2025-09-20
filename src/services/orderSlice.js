@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { API_ORDER } from "../utils/api";
+import { API } from "../utils/api";
+import { request } from "../utils/checkResponse";
 
 const initialState = {
   currentOrder: null,
@@ -39,15 +40,11 @@ export const { fetchOrderStart, fetchOrderSuccess, fetchOrderFailed, clearOrder 
 export const createOrder = (ingredientsIds) => async (dispatch) => {
   dispatch(fetchOrderStart());
   try {
-    const res = await fetch(API_ORDER, {
+    const data = await request(API.ORDERS, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ingredients: ingredientsIds })
     });
-
-    if (!res.ok) throw new Error(`Ошибка ${res.status}`);
-
-    const data = await res.json();
 
     if (data.success) {
       dispatch(fetchOrderSuccess({number: data.order.number}));

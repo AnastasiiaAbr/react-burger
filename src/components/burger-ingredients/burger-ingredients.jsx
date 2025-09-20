@@ -48,7 +48,7 @@ function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredien
           if (item.type === 'bun') {
             count = bun && bun._id === item._id ? 2 : 0;
           } else {
-            count = fillings.filter(el => el._idAPI === item._id).length;
+            count = fillings.filter(el => el._id === item._id).length;
           }
 
 
