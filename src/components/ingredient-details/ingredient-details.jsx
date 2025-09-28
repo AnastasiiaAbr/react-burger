@@ -36,8 +36,8 @@ const IngredientDetails = ({ingredient}) => {
   );
 };
 
-IngredientDetails.propTypes = ({
+IngredientDetails.propTypes = {
   ingredient: ingredientPropType,
-})
+}
 
 export default IngredientDetails;
