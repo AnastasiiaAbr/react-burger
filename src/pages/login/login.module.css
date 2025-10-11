@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 180px;
+}
+
+a {
+  text-decoration: none;
+  color: #4C4CFF
+}
+
+.form {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.passwordInput {
+  margin: 24px 0;
+}
+
+.text {
+  margin: 80px 0 16px;
+  gap: 0;
+}

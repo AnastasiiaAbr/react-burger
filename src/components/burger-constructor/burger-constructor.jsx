@@ -7,10 +7,23 @@ import { useModal } from '../../hooks/useModal';
 import { useDrag, useDrop } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-
-import { selectConstructorBun, selectConstructorFillings, removeFilling, setBun, addFilling, moveFilling, clearConstructor
-} from '../../services/constructorSlice';
-import { createOrder, selectCurrentOrder, selectOrderLoading } from '../../services/orderSlice';
+import {
+  selectConstructorBun,
+  selectConstructorFillings,
+  removeFilling,
+  setBun,
+  addFilling,
+  moveFilling,
+  clearConstructor
+} from '../../services/constructor-slice';
+import {
+  createOrder,
+  selectCurrentOrder,
+  selectOrderLoading
+} from '../../services/order-slice';
+import Preloader from '../preloader/preloader';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { selectUser } from '../../services/user-slice';
 
 function FillingCard({ ingredient, index, moveCard, onRemove }) {
   const ref = useRef(null);
@@ -22,24 +35,20 @@ function FillingCard({ ingredient, index, moveCard, onRemove }) {
       const sourceIndex = item.index;
       const targetIndex = index;
       if (sourceIndex === targetIndex) return;
-
       const targetRect = ref.current.getBoundingClientRect();
       const targetMiddleY = (targetRect.bottom - targetRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
       const hoverClientY = clientOffset.y - targetRect.top;
-
       if (sourceIndex < targetIndex && hoverClientY < targetMiddleY) return;
       if (sourceIndex > targetIndex && hoverClientY > targetMiddleY) return;
-
       moveCard(sourceIndex, targetIndex);
       item.index = targetIndex;
     }
   });
 
-  const [{ isDragging }, drag] = useDrag({
+  const [, drag] = useDrag({
     type: 'filling',
-    item: { ingredient, index },
-    collect: (monitor) => ({ isDragging: monitor.isDragging() })
+    item: { ingredient, index }
   });
 
   drag(drop(ref));
@@ -66,6 +75,8 @@ FillingCard.propTypes = {
 
 export default function BurgerConstructor() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { isModalOpen, openModal, closeModal } = useModal();
 
   const [{ isOver }, dropRef] = useDrop({
@@ -80,6 +91,7 @@ export default function BurgerConstructor() {
     collect: (monitor) => ({ isOver: monitor.isOver() })
   });
 
+  const user = useSelector(selectUser);
   const bun = useSelector(selectConstructorBun);
   const fillings = useSelector(selectConstructorFillings);
   const order = useSelector(selectCurrentOrder);
@@ -88,6 +100,22 @@ export default function BurgerConstructor() {
   const totalPrice = useMemo(() => {
     return (bun ? bun.price * 2 : 0) + fillings.reduce((sum, item) => sum + item.price, 0);
   }, [bun, fillings]);
+
+  useEffect(() => {
+    const savedOrder = localStorage.getItem('pendingOrder');
+    if (savedOrder && user && !bun && fillings.length === 0) {
+      const { bun: savedBun, fillings: savedFillings } = JSON.parse(savedOrder);
+      if (savedBun) dispatch(setBun(savedBun));
+      if (savedFillings?.length) savedFillings.forEach(f => dispatch(addFilling(f)));
+      localStorage.removeItem('pendingOrder');
+    }
+  }, [user, dispatch, bun, fillings.length]);
+
+  useEffect(() => {
+    if (order && !loading) {
+      dispatch(clearConstructor());
+    }
+  }, [order, loading, dispatch]);
 
   const handleOrderClick = () => {
     if (!bun) {
@@ -98,20 +126,18 @@ export default function BurgerConstructor() {
       alert('Добавьте хотя бы один ингредиент');
       return;
     }
-    const ingredientsIds = [
-      bun._id,
-      ...fillings.map(item => item._id)
-    ];
 
+    if (!user) {
+      const pendingOrder = { bun, fillings };
+      localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+
+    const ingredientsIds = [bun._id, ...fillings.map(item => item._id)];
+    openModal();
     dispatch(createOrder(ingredientsIds));
   };
-
-  useEffect(() => {
-    if (order) {
-      openModal();
-      dispatch(clearConstructor());
-    }
-  }, [order, openModal]);
 
   return (
     <div className={styles.container} ref={dropRef}>
@@ -126,17 +152,21 @@ export default function BurgerConstructor() {
       )}
 
       <div className={styles.scrollArea}>
-        {fillings.length > 0
-          ? fillings.map((item, index) => (
+        {fillings.length > 0 ? (
+          fillings.map((item, index) => (
             <FillingCard
               key={item._uniqueId}
               ingredient={item}
               index={index}
-              moveCard={(from, to) => dispatch(moveFilling({ sourceIndex: from, targetIndex: to }))}
+              moveCard={(from, to) =>
+                dispatch(moveFilling({ sourceIndex: from, targetIndex: to }))
+              }
               onRemove={(id) => dispatch(removeFilling(id))}
             />
           ))
-          : !bun && <p className="text text_type_main-medium">Выберите ингредиенты</p>}
+        ) : (
+          !bun && <p className="text text_type_main-medium">Выберите ингредиенты</p>
+        )}
       </div>
 
       {bun && (
@@ -155,15 +185,24 @@ export default function BurgerConstructor() {
             <span className="text text_type_digits-medium">{totalPrice}</span>
             <CurrencyIcon type='primary' />
           </div>
-          <Button htmlType="button" type='primary' size='large' onClick={handleOrderClick}>
+          <Button
+            htmlType="button"
+            type='primary'
+            size='large'
+            onClick={handleOrderClick}
+          >
             {loading ? 'Оформляем заказ' : 'Оформить заказ'}
           </Button>
         </div>
       )}
 
-      {isModalOpen && order && (
+      {isModalOpen && (
         <Modal onClose={closeModal} closeStyle='absolute'>
-          <OrderDetails orderNumber={order.number} />
+          {loading ? (
+            <Preloader />
+          ) : order ? (
+            <OrderDetails orderNumber={order.number} />
+          ) : null}
         </Modal>
       )}
     </div>
