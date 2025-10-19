@@ -5,9 +5,10 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../../utils/api";
 import { request } from "../../utils/request";
+import { useForm } from "../../hooks/useForm";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+  const {values, handleChange} = useForm({email: ''});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -20,7 +21,7 @@ const ForgotPassword = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email: values.email })
       })
 
       .then((data) => {
@@ -47,8 +48,8 @@ const ForgotPassword = () => {
           <EmailInput
             name='email'
             placeholder="Укажите e-mail"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            value={values.email}
+            onChange={handleChange}
           />
           <Button htmlType="submit" type="primary" size='medium' disabled={loading}>Восстановить</Button>
           <p className={`text text_type_main-default text_color_inactive ${styles.text}`}>Вспомнили пароль?

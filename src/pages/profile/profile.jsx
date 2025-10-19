@@ -4,19 +4,23 @@ import { Input, PasswordInput, EmailInput, Button } from '@ya.praktikum/react-de
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { updateUser, logoutUser } from '../../services/user-slice';
-
+import { useForm } from '../../hooks/useForm';
 
 
 const Profile = () => {
   const { user } = useSelector(state => state.user);
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const { values: form, handleChange, setValues } = useForm({
+    name: '',
+    email: '',
+    password: ''
+  });
   const [isChanged, setIsChanged] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      setForm({
+      setValues({
         name: user.name || '',
         email: user.email || '',
         password: ''
@@ -24,14 +28,13 @@ const Profile = () => {
     }
   }, [user]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+  const handleInputChange = (e) => {
+    handleChange(e);
     setIsChanged(true);
   }
 
   const handleCancel = () => {
-    setForm({
+    setValues({
       name: user.name || '',
       email: user.email || '',
       password: ''
@@ -68,34 +71,34 @@ const Profile = () => {
           </NavLink>
 
           <button
-          onClick={handleLogout}
-          className={`${styles.logout} ${styles.link} text text_type_main-medium text_color_inactive`}>
+            onClick={handleLogout}
+            className={`${styles.logout} ${styles.link} text text_type_main-medium text_color_inactive`}>
             Выход
-            </button>
+          </button>
           <p className={`${styles.text} text text_type_main-default text_color_inactive`}>
             В этом разделе вы можете изменить свои персональные данные
           </p>
         </nav>
 
-        <form className={styles.form}  onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <Input
             name="name"
             placeholder="Имя"
             value={form.name}
             icon="EditIcon"
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
           <EmailInput
             name="email"
             value={form.email}
             icon='EditIcon'
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
           <PasswordInput
             name="password"
             value={form.password}
             icon='EditIcon'
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
 
           {isChanged && (

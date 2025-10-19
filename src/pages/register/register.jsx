@@ -1,22 +1,24 @@
 import styles from './register.module.css';
 import { EmailInput, Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../../services/user-slice';
+import { useForm } from '../../hooks/useForm';
 
 const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  const { values, handleChange} = useForm({
+    name: '',
+    password: '',
+    email: ''
+  }) 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const result = await dispatch(registerUser({ email, password, name}));
+    const result = await dispatch(registerUser({ email: values.email, password: values.password, name: values.name}));
 
     if (registerUser.fulfilled.match(result)) {
       navigate('/');
@@ -33,18 +35,18 @@ const Register = () => {
         <Input
         name='name'
         placeholder='Имя'
-        value={name}
-        onChange={e => setName(e.target.value)}
+        value={values.name}
+        onChange={handleChange}
         />
         <EmailInput
         name='email'
-        value={email}
-        onChange={e => setEmail(e.target.value)}
+        value={values.email}
+        onChange={handleChange}
         />
         <PasswordInput 
         name='password'
-        value={password}
-        onChange={e => setPassword(e.target.value)}
+        value={values.password}
+        onChange={handleChange}
         />
         <Button htmlType='submit' type='primary' size='medium'>Зарегистрироваться</Button>
         <p className={`text text_type_main-default text_color_inactive ${styles.text}`}>Уже зарегистрированы? <Link to='/login'> Войти</Link> </p>

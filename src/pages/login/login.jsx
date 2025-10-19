@@ -6,17 +6,21 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../services/user-slice";
 import { checkUserAuth } from "../../services/user-slice";
+import { useForm } from "../../hooks/useForm";
 
 const Login = () => {
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const {values, handleChange} = useForm({
+    email: '',
+    password: ''
+  });
+
 const handleSubmit = async (e) => {
   e.preventDefault();
-  const result = await dispatch(loginUser({ email, password }));
+  const result = await dispatch(loginUser({ email: values.email, password: values.password }));
 
   if (loginUser.fulfilled.match(result)) {
     await dispatch(checkUserAuth());
@@ -36,14 +40,14 @@ const handleSubmit = async (e) => {
         <form className={styles.form} onSubmit={handleSubmit}>
           <EmailInput
             name='email'
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            value={values.email}
+            onChange={handleChange}
           />
           <div className={styles.passwordInput}>
           <PasswordInput
             name='password'
-            value={password}
-            onChange={e => setPassword(e.target.value)}
+            value={values.password}
+            onChange={handleChange}
           />
           </div>
           <Button htmlType="submit" type="primary" size='medium'>Войти</Button>

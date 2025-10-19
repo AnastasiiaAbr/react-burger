@@ -4,12 +4,15 @@ import { PasswordInput, Button, Input } from '@ya.praktikum/react-developer-burg
 import { Link, replace, useNavigate } from 'react-router-dom';
 import { request } from '../../utils/request';
 import { API } from '../../utils/api';
+import { useForm } from '../../hooks/useForm';
 
 const ResetPassword = () => {
-  const [password, setPassword] = useState('');
-  const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const {values, handleChange} = useForm({
+    password: '',
+    code: ''
+  })
 
   useEffect(() => {
     const canAccess = localStorage.getItem('RESET_PASSWORD');
@@ -26,8 +29,8 @@ const ResetPassword = () => {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        password,
-        token: code
+        password: values.password,
+        token: values.code
       })
     })
       .then(data => {
@@ -54,14 +57,14 @@ const ResetPassword = () => {
           <PasswordInput
             name='password'
             placeholder="Введите новый пароль"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
+            value={values.password}
+            onChange={handleChange}
           />
           <Input
             name='code'
             placeholder='Введите код из письма'
-            value={code}
-            onChange={e => setCode(e.target.value)}
+            value={values.code}
+            onChange={handleChange}
           />
           <Button htmlType="submit" type="primary" size='medium'>Сохранить</Button>
           <p className={`text text_type_main-default text_color_inactive ${styles.text}`}>Вспомнили пароль?
