@@ -5,11 +5,11 @@ nav {
   justify-content: space-between;
 }
 
-.left, 
+.left,
 .right {
   display: flex;
   flex: 1;
-  justify-content: center
+  justify-content: center;
 }
 
 .right {
@@ -21,6 +21,7 @@ nav {
 }
 
 .iconWrapper {
-   display: flex;
-   align-items: center;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }

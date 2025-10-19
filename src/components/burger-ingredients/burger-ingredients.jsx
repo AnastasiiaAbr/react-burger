@@ -6,15 +6,17 @@ import styles from './burger-ingredients.module.css';
 import Modal from "../modal/modal";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import { ingredientPropType } from '../../utils/prop-types/ingredient-prop-types'
-import { useModal } from "../../hooks/useModal";
 import { useDrag } from "react-dnd";
 
-import { selectIngredient} from '../../services/ingredientsSlice';
-import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/constructorSlice";
-import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/ingredientDetailsSlice";
+import { selectIngredient } from '../../services/ingredients-slice';
+import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/constructor-slice";
+import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/ingredient-details-slice";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function IngredientCard({ ingredient, count = 0, onClick }) {
-  const [{isDragging}, dragRef] = useDrag({
+  const location = useLocation();
+
+  const [{ isDragging }, dragRef] = useDrag({
     type: 'ingredient',
     item: ingredient,
     collect: (monitor) => ({
@@ -22,11 +24,18 @@ function IngredientCard({ ingredient, count = 0, onClick }) {
     })
   });
   return (
-    <div className={styles.card} onClick={() => onClick(ingredient)} ref={dragRef}>
-      {count > 0 && <Counter count={count} size='default' />}
-      <img src={ingredient.image} alt={ingredient.name} />
-      <p className="text text_type_main-medium">{ingredient.price} <CurrencyIcon /></p>
-      <p className="text text_type_main-default">{ingredient.name}</p>
+    <div ref={dragRef}>
+    <Link
+      to={`/ingredients/${ingredient._id}`}
+      state={{ background: location }}
+    >
+      <div className={styles.card} onClick={() => onClick(ingredient)}>
+        {count > 0 && <Counter count={count} size='default' />}
+        <img src={ingredient.image} alt={ingredient.name} />
+        <p className="text text_type_main-medium">{ingredient.price} <CurrencyIcon /></p>
+        <p className="text text_type_main-default">{ingredient.name}</p>
+      </div>
+    </Link>
     </div>
   )
 }
@@ -37,7 +46,7 @@ IngredientCard.propTypes = {
   onClick: PropTypes.func.isRequired,
 };
 
-function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredientClick}) {
+function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredientClick }) {
   return (
     <div className={styles.category} ref={innerRef}>
       <h2 className="text text_type_main-large">{title}</h2>
@@ -70,21 +79,23 @@ IngredientCategory.propTypes = {
   items: PropTypes.arrayOf(ingredientPropType).isRequired,
   innerRef: PropTypes.object,
   bun: PropTypes.oneOfType([
-  ingredientPropType,
-  PropTypes.oneOf([null])
-]),
+    ingredientPropType,
+    PropTypes.oneOf([null])
+  ]),
   fillings: PropTypes.arrayOf(ingredientPropType).isRequired,
   onIngredientClick: PropTypes.func.isRequired,
 }
 
 export default function BurgerIngredients() {
   const dispatch = useDispatch();
-  const { isModalOpen, openModal, closeModal} = useModal();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const ingredients = useSelector(selectIngredient);
   const bun = useSelector(selectConstructorBun);
   const fillings = useSelector(selectConstructorFillings);
   const selectedIngredient = useSelector(selectIngredientDetails);
+  const background = location.state?.background;
 
 
   const [currentTab, setCurrentTab] = useState('bun');
@@ -115,7 +126,7 @@ export default function BurgerIngredients() {
 
     const handleScroll = () => {
       const bunTop = Math.abs(bunRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top);
-      const sauceTop = Math.abs(sauceRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top );
+      const sauceTop = Math.abs(sauceRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top);
       const mainTop = Math.abs(mainRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top);
 
       const minDistance = Math.min(bunTop, sauceTop, mainTop);
@@ -136,13 +147,8 @@ export default function BurgerIngredients() {
     } else {
       dispatch(addFilling(ingredient));
     };
-    openModal();
+    navigate(`/ingredients/${ingredient._id}`, { state: { background: location } })
   };
-
-  const handleCloseModal = () => {
-    dispatch(clearIngredient());
-    closeModal()
-};
 
   return (
     <>
@@ -162,8 +168,8 @@ export default function BurgerIngredients() {
         </div>
       </div >
 
-      {isModalOpen && selectedIngredient && (
-        <Modal title='Детали ингредиента' onClose={handleCloseModal} closeStyle='inline'>
+      {background && selectedIngredient && (
+        <Modal title="Детали ингредиента" onClose={() => navigate(-1)} closeStyle="inline">
           <IngredientDetails ingredient={selectedIngredient} />
         </Modal>
       )}

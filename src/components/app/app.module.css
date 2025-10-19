@@ -3,13 +3,3 @@
   margin: 0 auto;
   box-sizing: border-box;
 }
-
-
-.content {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  max-width: 1280px;
-  margin: 0 auto;
-}
