@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import {
   Logo,
   BurgerIcon,
@@ -9,17 +8,21 @@ import {
 import styles from './app-header.module.css'
 import { NavLink } from "react-router-dom";
 
-const AppHeader = () => {
+type TAppHeaderProps = {
+  className?: string;
+}
+
+const AppHeader = ({className}: TAppHeaderProps): React.JSX.Element => {
   return (
     <header>
       <nav className={styles.nav}>
         <div className={styles.left}>
           <NavLink to='/'
-            className={({ isActive }) =>
+            className={({ isActive }: {isActive : boolean}) : string =>
               `mt-4 mb-4 pl-5 pr-5 ${styles.iconWrapper} ${isActive ? styles.link_active : styles.link}`
             }
           >
-            {({ isActive }) => (
+            {({ isActive }: {isActive: boolean}) => (
               <>
                 <BurgerIcon type={isActive ? 'primary' : 'secondary'} />
                 <span className={`text text_type_main-small ml-2 ${isActive ? "text_color_primary" : "text_color_inactive"}`}>

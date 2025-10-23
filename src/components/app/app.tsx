@@ -18,14 +18,14 @@ import { Protected } from '../protected-route';
 import { checkUserAuth } from '../../services/user-slice';
 
 
-function App() {
+function App(): React.JSX.Element {
    const dispatch = useDispatch();
    const location = useLocation();
    const navigate = useNavigate();
    
    const background = location.state && location.state.background;
-   const [savedBackground, setSavedBackground] = useState(null);
-   const [savedIngredientId, setSavedIngredientId] = useState(null);
+   const [savedBackground, setSavedBackground] = useState<null | Location>(null);
+   const [savedIngredientId, setSavedIngredientId] = useState<null | string>(null);
 
 
    const loading = useSelector(selectIngredientLoading);
@@ -34,10 +34,12 @@ function App() {
 
 
    useEffect(() => {
+      // @ts-expect-error 'Sprint5'
       dispatch(fetchIngredients());
    }, [dispatch]);
 
    useEffect(() => {
+      // @ts-expect-error 'Sprint5'
       dispatch(checkUserAuth());
    }, [dispatch])
 
@@ -51,12 +53,13 @@ function App() {
    useEffect(() => {
       if (background && location.pathname.startsWith('/ingredients/')) {
          const ingredientId = location.pathname.split('/').pop();
+         if (ingredientId) {
          sessionStorage.setItem('background', JSON.stringify(background));
          sessionStorage.setItem('ingredientId', ingredientId);
-      }
+         }}
    }, [background, location.pathname]);
 
-   const handleCloseModal = () => {
+   const handleCloseModal = (): void => {
       sessionStorage.removeItem('background');
       sessionStorage.removeItem('ingredientId');
       navigate(-1);
@@ -73,7 +76,7 @@ function App() {
 
    return (
       <>
-         <AppHeader className={styles.wrapper} />
+         <AppHeader className={styles.wrapper}/>
          <Routes location={activeBackground || location}>
             <Route path='/' element={<Home />} />
             <Route path='/profile' element={<Protected component={<Profile />} />} />

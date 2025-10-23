@@ -7,36 +7,41 @@ import { API } from "../../utils/api";
 import { request } from "../../utils/request";
 import { useForm } from "../../hooks/useForm";
 
-const ForgotPassword = () => {
-  const {values, handleChange} = useForm({email: ''});
+const ForgotPassword = (): React.JSX.Element => {
+  const { values, handleChange } = useForm({ email: '' });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    request(API.PASSWORD_RESET, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email: values.email })
-      })
+    type TForgotResponse = {
+      success: boolean;
+      message?: string;
+    } 
+
+    request<TForgotResponse>(API.PASSWORD_RESET, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: values.email })
+    })
 
       .then((data) => {
-      if (data.success) {
-        localStorage.setItem('RESET_PASSWORD', true);
-        navigate('/reset-password', { replace: true });
-      } else {
-        alert(data.message || "Не удалось отправить письмо");
-      }
-    }) 
-    .catch ((err) =>  {
-      console.error(err);
-      alert('Произошла ошибка. Попробуйте еще раз');
-    }) 
-     .finally (() => setLoading(false));
+        if (data.success) {
+          localStorage.setItem('RESET_PASSWORD', 'true');
+          navigate('/reset-password', { replace: true });
+        } else {
+          alert(data.message || "Не удалось отправить письмо");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('Произошла ошибка. Попробуйте еще раз');
+      })
+      .finally(() => setLoading(false));
   };
 
 

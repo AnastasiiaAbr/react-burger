@@ -1,9 +1,12 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import styles from './order-details.module.css';
 import { CheckMarkIcon } from "@ya.praktikum/react-developer-burger-ui-components";
 
-const OrderDetails = ({orderNumber}) => {
+type TOrderDetailsProps = {
+  orderNumber: string | number;
+}
+
+const OrderDetails = ({orderNumber}: TOrderDetailsProps): React.JSX.Element => {
   return (
     <div className={styles.details}>
       <p className={`${styles.orderId} text text_type_digits-large`}>{orderNumber}</p>
@@ -13,13 +16,6 @@ const OrderDetails = ({orderNumber}) => {
       <p className='text text_type_main-default text_color_inactive'>Дождитесь готовности на орбитальной станции</p>
     </div>
   )
-}
-
-OrderDetails.propTypes = {
-  orderNumber: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]).isRequired,
 };
 
 export default OrderDetails;

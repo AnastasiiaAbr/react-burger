@@ -1,18 +1,15 @@
 import React from "react";
-import PropTypes from 'prop-types';
 import styles from './ingredient-details.module.css';
-import {ingredientPropType} from "../../utils/prop-types/ingredient-prop-types";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectIngredient } from "../../services/ingredients-slice";
+import { TIngredientDetailProps, TIngredientProps } from "../../utils/types/ingredient-types";
 
-
-const IngredientDetails = ({ingredient}) => {
+const IngredientDetails = ({ingredient}: TIngredientDetailProps): React.JSX.Element => {
   const { ingredientId } = useParams();
   const ingredients = useSelector(selectIngredient);
 
-  const currentIngredient = 
-  ingredient || ingredients.find(item => item._id === ingredientId);
+  const currentIngredient: TIngredientProps | undefined = ingredient || ingredients.find((item: TIngredientProps) => item._id === ingredientId);
 
   if (!currentIngredient) {
     return <p className="text text_type_main-default">Ингредиент не найден</p>;
@@ -48,8 +45,5 @@ const IngredientDetails = ({ingredient}) => {
   );
 };
 
-IngredientDetails.propTypes = {
-  ingredient: ingredientPropType,
-}
 
 export default IngredientDetails;

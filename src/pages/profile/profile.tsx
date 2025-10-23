@@ -7,7 +7,8 @@ import { updateUser, logoutUser } from '../../services/user-slice';
 import { useForm } from '../../hooks/useForm';
 
 
-const Profile = () => {
+const Profile = (): React.JSX.Element => {
+  // @ts-expect-error 'Sprint5'
   const { user } = useSelector(state => state.user);
   const { values: form, handleChange, setValues } = useForm({
     name: '',
@@ -28,12 +29,12 @@ const Profile = () => {
     }
   }, [user]);
 
-  const handleInputChange = (e) => {
-    handleChange(e);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    handleChange(e as React.ChangeEvent<HTMLInputElement>);
     setIsChanged(true);
   }
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setValues({
       name: user.name || '',
       email: user.email || '',
@@ -42,13 +43,15 @@ const Profile = () => {
     setIsChanged(false);
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+    // @ts-expect-error 'Sprint5'
     dispatch(updateUser(form));
     setIsChanged(false);
   };
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
+    // @ts-expect-error 'Sprint5'
     dispatch(logoutUser()).then(() => navigate('/login', { replace: true }));
   };
 
@@ -86,13 +89,15 @@ const Profile = () => {
             placeholder="Имя"
             value={form.name}
             icon="EditIcon"
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange(e as React.ChangeEvent<HTMLInputElement>)}
+            {...({} as any)}
           />
-          <EmailInput
+          <Input
             name="email"
             value={form.email}
             icon='EditIcon'
             onChange={handleInputChange}
+            {...({} as any)}
           />
           <PasswordInput
             name="password"
