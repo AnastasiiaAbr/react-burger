@@ -1,10 +1,18 @@
 import { API } from "./api";
 
-const checkResponse = (res) => {
+type TTokenResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+  message?: string;
+};
+
+
+const checkResponse = <T>(res: Response) : Promise<T> => {
   return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
 };
 
-export const refreshToken = () => {
+export const refreshToken = (): Promise<TTokenResponse> => {
   return fetch(API.AUTH_TOKEN, {
     method: 'POST',
     headers: {
@@ -14,7 +22,7 @@ export const refreshToken = () => {
       token: localStorage.getItem('refreshToken')
     }),
   })
-  .then(checkResponse)
+  .then(checkResponse<TTokenResponse>)
   .then((refreshData) => {
     if (!refreshData.success) {
       return Promise.reject(refreshData);
@@ -25,23 +33,23 @@ export const refreshToken = () => {
   });
 };
 
-export const fetchWithRefresh = async (url, options) => {
+export const fetchWithRefresh = async <T>(url: string, options: RequestInit) : Promise<T> => {
   try {
     const res = await fetch(url, options);
-    return await checkResponse(res);
-  } catch (err) {
+    return await checkResponse<T>(res);
+  } catch (err: any) {
     if (err.message === "jwt expired") {
       const refreshData = await refreshToken();
-      options.headers.authorization = refreshData.accessToken;
+      (options.headers as Record<string, string>).authorization = refreshData.accessToken;
       const res = await fetch(url, options);
-      return await checkResponse(res);
+      return await checkResponse<T>(res);
     } else {
       return Promise.reject(err);
     }
   }
 };
 
-export const saveTokens = (accessToken, refreshToken) => {
+export const saveTokens = (accessToken: string, refreshToken: string) => {
   const clearAccessToken = accessToken.replace('Bearer ', '');
   localStorage.setItem('accessToken', clearAccessToken);
   localStorage.setItem('refreshToken', refreshToken);

@@ -1,14 +1,13 @@
 import React from "react";
 import styles from './login.module.css';
 import { EmailInput, Button, PasswordInput } from "@ya.praktikum/react-developer-burger-ui-components";
-import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../services/user-slice";
 import { checkUserAuth } from "../../services/user-slice";
 import { useForm } from "../../hooks/useForm";
 
-const Login = () => {
+const Login = (): React.JSX.Element => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,11 +17,13 @@ const Login = () => {
     password: ''
   });
 
-const handleSubmit = async (e) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
+  // @ts-expect-error 'Sprint5'
   const result = await dispatch(loginUser({ email: values.email, password: values.password }));
 
   if (loginUser.fulfilled.match(result)) {
+    //@ts-expect-error 'Sprint5'
     await dispatch(checkUserAuth());
 
     const from = location.state?.from || '/profile';

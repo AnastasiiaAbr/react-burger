@@ -1,22 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import PropTypes from 'prop-types';
 import { Tab, CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './burger-ingredients.module.css';
 import Modal from "../modal/modal";
 import IngredientDetails from "../ingredient-details/ingredient-details";
-import { ingredientPropType } from '../../utils/prop-types/ingredient-prop-types'
 import { useDrag } from "react-dnd";
 
 import { selectIngredient } from '../../services/ingredients-slice';
 import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/constructor-slice";
 import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/ingredient-details-slice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import {  TIngredientProps } from "../../utils/types/ingredient-types";
 
-function IngredientCard({ ingredient, count = 0, onClick }) {
+type TIngredientCardProps = {
+  ingredient: TIngredientProps;
+  count: number;
+  onClick: (ingredient: TIngredientProps) => void;
+}
+
+function IngredientCard({ ingredient, count = 0, onClick }: TIngredientCardProps) : React.JSX.Element {
   const location = useLocation();
 
-  const [{ isDragging }, dragRef] = useDrag({
+  const [{ isDragging }, dragRef] = useDrag<TIngredientProps, unknown, { isDragging: boolean }>({
     type: 'ingredient',
     item: ingredient,
     collect: (monitor) => ({
@@ -24,7 +29,7 @@ function IngredientCard({ ingredient, count = 0, onClick }) {
     })
   });
   return (
-    <div ref={dragRef}>
+    <div ref={dragRef as unknown as React.Ref<HTMLDivElement>}>
     <Link
       to={`/ingredients/${ingredient._id}`}
       state={{ background: location }}
@@ -32,21 +37,24 @@ function IngredientCard({ ingredient, count = 0, onClick }) {
       <div className={styles.card} onClick={() => onClick(ingredient)}>
         {count > 0 && <Counter count={count} size='default' />}
         <img src={ingredient.image} alt={ingredient.name} />
-        <p className="text text_type_main-medium">{ingredient.price} <CurrencyIcon /></p>
+        <p className="text text_type_main-medium">{ingredient.price} <CurrencyIcon type="primary"/></p>
         <p className="text text_type_main-default">{ingredient.name}</p>
       </div>
     </Link>
     </div>
   )
-}
-
-IngredientCard.propTypes = {
-  ingredient: ingredientPropType.isRequired,
-  count: PropTypes.number,
-  onClick: PropTypes.func.isRequired,
 };
 
-function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredientClick }) {
+type TIngredientCategoryProps = {
+  title: string;
+  items: TIngredientProps[];
+  innerRef: React.RefObject<HTMLDivElement | null>;
+  bun: TIngredientProps;
+  fillings: TIngredientProps[];
+  onIngredientClick: (ingredient: TIngredientProps) => void;
+};
+
+function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredientClick }: TIngredientCategoryProps): React.JSX.Element {
   return (
     <div className={styles.category} ref={innerRef}>
       <h2 className="text text_type_main-large">{title}</h2>
@@ -74,24 +82,13 @@ function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredien
   );
 }
 
-IngredientCategory.propTypes = {
-  title: PropTypes.string.isRequired,
-  items: PropTypes.arrayOf(ingredientPropType).isRequired,
-  innerRef: PropTypes.object,
-  bun: PropTypes.oneOfType([
-    ingredientPropType,
-    PropTypes.oneOf([null])
-  ]),
-  fillings: PropTypes.arrayOf(ingredientPropType).isRequired,
-  onIngredientClick: PropTypes.func.isRequired,
-}
 
-export default function BurgerIngredients() {
+export default function BurgerIngredients() : React.JSX.Element {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const ingredients = useSelector(selectIngredient);
+  const ingredients = useSelector(selectIngredient) as TIngredientProps[];
   const bun = useSelector(selectConstructorBun);
   const fillings = useSelector(selectConstructorFillings);
   const selectedIngredient = useSelector(selectIngredientDetails);
@@ -100,16 +97,16 @@ export default function BurgerIngredients() {
 
   const [currentTab, setCurrentTab] = useState('bun');
 
-  const bunRef = useRef(null);
-  const sauceRef = useRef(null);
-  const mainRef = useRef(null);
-  const scrollRef = useRef(null);
+  const bunRef = useRef<HTMLDivElement>(null);
+  const sauceRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const buns = ingredients.filter(item => item.type === 'bun');
   const sauces = ingredients.filter(item => item.type === 'sauce');
   const mains = ingredients.filter(item => item.type === 'main');
 
-  const handleTabClick = (tab) => {
+  const handleTabClick = (tab: 'bun' | 'sauce' | 'main') => {
     setCurrentTab(tab);
     if (tab === 'bun' && bunRef.current) {
       bunRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -125,6 +122,7 @@ export default function BurgerIngredients() {
     if (!container) return;
 
     const handleScroll = () => {
+      if (!bunRef.current || !sauceRef.current || !mainRef.current) return;
       const bunTop = Math.abs(bunRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top);
       const sauceTop = Math.abs(sauceRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top);
       const mainTop = Math.abs(mainRef.current.getBoundingClientRect().top - container.getBoundingClientRect().top);
@@ -140,7 +138,7 @@ export default function BurgerIngredients() {
     return () => container.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleIngredientClick = (ingredient) => {
+  const handleIngredientClick = (ingredient: TIngredientProps) => {
     dispatch(setIngredient(ingredient));
     if (ingredient.type === 'bun') {
       dispatch(setBun(ingredient));

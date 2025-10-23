@@ -4,9 +4,8 @@ import styles from './burger-constructor.module.css';
 import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
 import { useModal } from '../../hooks/useModal';
-import { useDrag, useDrop } from 'react-dnd';
+import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
 import {
   selectConstructorBun,
   selectConstructorFillings,
@@ -24,20 +23,38 @@ import {
 import Preloader from '../preloader/preloader';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { selectUser } from '../../services/user-slice';
+import { TIngredientProps } from '../../utils/types/ingredient-types';
 
-function FillingCard({ ingredient, index, moveCard, onRemove }) {
-  const ref = useRef(null);
+type TFiilingCardProps = {
+  ingredient: TIngredientProps;
+  index: number;
+  moveCard: (sourceIndex: number, targetIndex: number) => void;
+  onRemove: (id: number) => void;
+};
 
-  const [, drop] = useDrop({
+interface IDragItem {
+  index: number;
+  ingredient: TIngredientProps;
+  type: string;
+}
+
+function FillingCard({ ingredient, index, moveCard, onRemove }: TFiilingCardProps): React.JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [, drop] = useDrop<IDragItem>({
     accept: 'filling',
-    hover(item, monitor) {
+    hover(item, monitor: DropTargetMonitor<IDragItem>) {
       if (!ref.current) return;
+
       const sourceIndex = item.index;
       const targetIndex = index;
       if (sourceIndex === targetIndex) return;
+
       const targetRect = ref.current.getBoundingClientRect();
       const targetMiddleY = (targetRect.bottom - targetRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) return;
+
       const hoverClientY = clientOffset.y - targetRect.top;
       if (sourceIndex < targetIndex && hoverClientY < targetMiddleY) return;
       if (sourceIndex > targetIndex && hoverClientY > targetMiddleY) return;
@@ -46,9 +63,9 @@ function FillingCard({ ingredient, index, moveCard, onRemove }) {
     }
   });
 
-  const [, drag] = useDrag({
+  const [, drag] = useDrag<IDragItem>({
     type: 'filling',
-    item: { ingredient, index }
+    item: { ingredient, index, type: 'filling' }
   });
 
   drag(drop(ref));
@@ -60,26 +77,25 @@ function FillingCard({ ingredient, index, moveCard, onRemove }) {
         text={ingredient.name}
         price={ingredient.price}
         thumbnail={ingredient.image}
-        handleClose={() => onRemove(ingredient._uniqueId)}
+        handleClose={() => {
+          if (ingredient._uniqueId) {
+            onRemove(ingredient._uniqueId);
+          }
+        }}
       />
     </div>
   );
 }
 
-FillingCard.propTypes = {
-  ingredient: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired,
-  moveCard: PropTypes.func.isRequired,
-  onRemove: PropTypes.func.isRequired
-};
-
-export default function BurgerConstructor() {
+export default function BurgerConstructor(): React.JSX.Element {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { isModalOpen, openModal, closeModal } = useModal();
 
-  const [{ isOver }, dropRef] = useDrop({
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [{ isOver }, drop] = useDrop<TIngredientProps, void, {isOver: boolean}>({
     accept: 'ingredient',
     drop: (item) => {
       if (item.type === 'bun') {
@@ -91,14 +107,16 @@ export default function BurgerConstructor() {
     collect: (monitor) => ({ isOver: monitor.isOver() })
   });
 
+  drop(containerRef);
+
   const user = useSelector(selectUser);
   const bun = useSelector(selectConstructorBun);
   const fillings = useSelector(selectConstructorFillings);
   const order = useSelector(selectCurrentOrder);
   const loading = useSelector(selectOrderLoading);
 
-  const totalPrice = useMemo(() => {
-    return (bun ? bun.price * 2 : 0) + fillings.reduce((sum, item) => sum + item.price, 0);
+  const totalPrice = useMemo<number>(() => {
+    return (bun ? bun.price * 2 : 0) + fillings.reduce((sum: number, item: TIngredientProps) => sum + item.price, 0);
   }, [bun, fillings]);
 
   useEffect(() => {
@@ -106,18 +124,19 @@ export default function BurgerConstructor() {
     if (savedOrder && user && !bun && fillings.length === 0) {
       const { bun: savedBun, fillings: savedFillings } = JSON.parse(savedOrder);
       if (savedBun) dispatch(setBun(savedBun));
-      if (savedFillings?.length) savedFillings.forEach(f => dispatch(addFilling(f)));
+      if (savedFillings?.length) savedFillings.forEach((f: TIngredientProps) => dispatch(addFilling(f)));
       localStorage.removeItem('pendingOrder');
     }
   }, [user, dispatch, bun, fillings.length]);
 
   useEffect(() => {
     if (order && !loading) {
+      //@ts-expect-error 'Sprint5'
       dispatch(clearConstructor());
     }
   }, [order, loading, dispatch]);
 
-  const handleOrderClick = () => {
+  const handleOrderClick = (): void => {
     if (!bun) {
       alert('Выберите булку для оформления заказа');
       return;
@@ -134,13 +153,14 @@ export default function BurgerConstructor() {
       return;
     }
 
-    const ingredientsIds = [bun._id, ...fillings.map(item => item._id)];
+    const ingredientsIds = [bun._id, ...fillings.map((item: TIngredientProps)  => item._id)];
     openModal();
+    //@ts-expect-error 'Sprint5'
     dispatch(createOrder(ingredientsIds));
   };
 
   return (
-    <div className={styles.container} ref={dropRef}>
+    <div className={styles.container} ref={containerRef}>
       {bun && (
         <ConstructorElement
           type='top'
@@ -153,7 +173,7 @@ export default function BurgerConstructor() {
 
       <div className={styles.scrollArea}>
         {fillings.length > 0 ? (
-          fillings.map((item, index) => (
+          fillings.map((item: TIngredientProps, index: number) => (
             <FillingCard
               key={item._uniqueId}
               ingredient={item}
