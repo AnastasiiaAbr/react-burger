@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import styles from './profile.module.css';
 import { Input, PasswordInput, EmailInput, Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { updateUser, logoutUser } from '../../services/user-slice';
 import { useForm } from '../../hooks/useForm';
 
 
 const Profile = (): React.JSX.Element => {
-  // @ts-expect-error 'Sprint5'
-  const { user } = useSelector(state => state.user);
+  const { user } = useAppSelector(state => state.user);
   const { values: form, handleChange, setValues } = useForm({
     name: '',
     email: '',
     password: ''
   });
   const [isChanged, setIsChanged] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,23 +34,23 @@ const Profile = (): React.JSX.Element => {
   }
 
   const handleCancel = (): void => {
+    if (user) {
     setValues({
       name: user.name || '',
       email: user.email || '',
       password: ''
     });
+  }
     setIsChanged(false);
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    // @ts-expect-error 'Sprint5'
     dispatch(updateUser(form));
     setIsChanged(false);
   };
 
   const handleLogout = (): void => {
-    // @ts-expect-error 'Sprint5'
     dispatch(logoutUser()).then(() => navigate('/login', { replace: true }));
   };
 

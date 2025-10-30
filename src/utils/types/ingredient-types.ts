@@ -9,9 +9,9 @@ export type TIngredientProps = {
   proteins: number;
   fat: number;
   carbohydrates: number;
-  _uniqueId?: number;
+  _uniqueId?: string;
 };
 
 export type TIngredientDetailProps = {
-  ingredient?: TIngredientProps;
+  ingredient?: TIngredientProps | null ;
 }

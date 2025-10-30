@@ -49,7 +49,7 @@ type TIngredientCategoryProps = {
   title: string;
   items: TIngredientProps[];
   innerRef: React.RefObject<HTMLDivElement | null>;
-  bun: TIngredientProps;
+  bun: TIngredientProps | null;
   fillings: TIngredientProps[];
   onIngredientClick: (ingredient: TIngredientProps) => void;
 };

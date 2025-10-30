@@ -5,7 +5,7 @@ import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
 import { useModal } from '../../hooks/useModal';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import {
   selectConstructorBun,
   selectConstructorFillings,
@@ -29,7 +29,7 @@ type TFiilingCardProps = {
   ingredient: TIngredientProps;
   index: number;
   moveCard: (sourceIndex: number, targetIndex: number) => void;
-  onRemove: (id: number) => void;
+  onRemove: (id: string) => void;
 };
 
 interface IDragItem {
@@ -88,7 +88,7 @@ function FillingCard({ ingredient, index, moveCard, onRemove }: TFiilingCardProp
 }
 
 export default function BurgerConstructor(): React.JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { isModalOpen, openModal, closeModal } = useModal();
@@ -109,11 +109,11 @@ export default function BurgerConstructor(): React.JSX.Element {
 
   drop(containerRef);
 
-  const user = useSelector(selectUser);
-  const bun = useSelector(selectConstructorBun);
-  const fillings = useSelector(selectConstructorFillings);
-  const order = useSelector(selectCurrentOrder);
-  const loading = useSelector(selectOrderLoading);
+  const user = useAppSelector(selectUser);
+  const bun = useAppSelector(selectConstructorBun);
+  const fillings = useAppSelector(selectConstructorFillings);
+  const order = useAppSelector(selectCurrentOrder);
+  const loading = useAppSelector(selectOrderLoading);
 
   const totalPrice = useMemo<number>(() => {
     return (bun ? bun.price * 2 : 0) + fillings.reduce((sum: number, item: TIngredientProps) => sum + item.price, 0);
@@ -131,7 +131,6 @@ export default function BurgerConstructor(): React.JSX.Element {
 
   useEffect(() => {
     if (order && !loading) {
-      //@ts-expect-error 'Sprint5'
       dispatch(clearConstructor());
     }
   }, [order, loading, dispatch]);
@@ -155,7 +154,6 @@ export default function BurgerConstructor(): React.JSX.Element {
 
     const ingredientsIds = [bun._id, ...fillings.map((item: TIngredientProps)  => item._id)];
     openModal();
-    //@ts-expect-error 'Sprint5'
     dispatch(createOrder(ingredientsIds));
   };
 

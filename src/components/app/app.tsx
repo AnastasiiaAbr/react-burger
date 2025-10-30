@@ -9,7 +9,7 @@ import Login from '../../pages/login/login';
 import ResetPassword from '../../pages/reset-password/reset-password';
 import ForgotPassword from '../../pages/forgot-password/forgot-password';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import { fetchIngredients, selectIngredientLoading, selectIngredientError } from '../../services/ingredients-slice';
 import IngredientDetails from '../ingredient-details/ingredient-details';
 import Modal from '../modal/modal';
@@ -19,7 +19,7 @@ import { checkUserAuth } from '../../services/user-slice';
 
 
 function App(): React.JSX.Element {
-   const dispatch = useDispatch();
+   const dispatch = useAppDispatch();
    const location = useLocation();
    const navigate = useNavigate();
    
@@ -28,18 +28,16 @@ function App(): React.JSX.Element {
    const [savedIngredientId, setSavedIngredientId] = useState<null | string>(null);
 
 
-   const loading = useSelector(selectIngredientLoading);
-   const error = useSelector(selectIngredientError);
-   const ingredient = useSelector(selectIngredientDetails);
+   const loading = useAppSelector(selectIngredientLoading);
+   const error = useAppSelector(selectIngredientError);
+   const ingredient = useAppSelector(selectIngredientDetails);
 
 
    useEffect(() => {
-      // @ts-expect-error 'Sprint5'
       dispatch(fetchIngredients());
    }, [dispatch]);
 
    useEffect(() => {
-      // @ts-expect-error 'Sprint5'
       dispatch(checkUserAuth());
    }, [dispatch])
 
