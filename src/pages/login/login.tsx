@@ -2,10 +2,10 @@ import React from "react";
 import styles from './login.module.css';
 import { EmailInput, Button, PasswordInput } from "@ya.praktikum/react-developer-burger-ui-components";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../hooks/reduxHooks";
-import { loginUser } from "../../services/user-slice";
-import { checkUserAuth } from "../../services/user-slice";
+import { loginUser } from "../../services/slices/user-slice";
+import { checkUserAuth } from "../../services/slices/user-slice";
 import { useForm } from "../../hooks/useForm";
+import { useAppDispatch } from "../../services/store";
 
 const Login = (): React.JSX.Element => {
   const dispatch = useAppDispatch();

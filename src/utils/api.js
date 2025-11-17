@@ -13,3 +13,6 @@ export const API = {
   AUTH_TOKEN: `${BASE_URL}auth/token`,
   AUTH_USER: `${BASE_URL}auth/user`,
 };
+
+export const WS_URL_ALL = 'wss://norma.education-services.ru/orders/all';
+export const WS_URL_PROFILE = 'wss://norma.education-services.ru/orders';

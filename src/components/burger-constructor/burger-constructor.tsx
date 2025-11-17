@@ -5,7 +5,7 @@ import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
 import { useModal } from '../../hooks/useModal';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
-import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
+import { useAppDispatch, useSelector } from '../../services/store';
 import {
   selectConstructorBun,
   selectConstructorFillings,
@@ -14,15 +14,15 @@ import {
   addFilling,
   moveFilling,
   clearConstructor
-} from '../../services/constructor-slice';
+} from '../../services/slices/constructor-slice';
 import {
   createOrder,
   selectCurrentOrder,
   selectOrderLoading
-} from '../../services/order-slice';
+} from '../../services/slices/order-slice';
 import Preloader from '../preloader/preloader';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { selectUser } from '../../services/user-slice';
+import { selectUser } from '../../services/slices/user-slice';
 import { TIngredientProps } from '../../utils/types/ingredient-types';
 
 type TFiilingCardProps = {
@@ -95,7 +95,7 @@ export default function BurgerConstructor(): React.JSX.Element {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [{ isOver }, drop] = useDrop<TIngredientProps, void, {isOver: boolean}>({
+  const [{ isOver }, drop] = useDrop<TIngredientProps, void, { isOver: boolean }>({
     accept: 'ingredient',
     drop: (item) => {
       if (item.type === 'bun') {
@@ -109,11 +109,11 @@ export default function BurgerConstructor(): React.JSX.Element {
 
   drop(containerRef);
 
-  const user = useAppSelector(selectUser);
-  const bun = useAppSelector(selectConstructorBun);
-  const fillings = useAppSelector(selectConstructorFillings);
-  const order = useAppSelector(selectCurrentOrder);
-  const loading = useAppSelector(selectOrderLoading);
+  const user = useSelector(selectUser);
+  const bun = useSelector(selectConstructorBun);
+  const fillings = useSelector(selectConstructorFillings);
+  const order = useSelector(selectCurrentOrder);
+  const loading = useSelector(selectOrderLoading);
 
   const totalPrice = useMemo<number>(() => {
     return (bun ? bun.price * 2 : 0) + fillings.reduce((sum: number, item: TIngredientProps) => sum + item.price, 0);
@@ -152,10 +152,12 @@ export default function BurgerConstructor(): React.JSX.Element {
       return;
     }
 
-    const ingredientsIds = [bun._id, ...fillings.map((item: TIngredientProps)  => item._id)];
+    const ingredientsIds = [bun._id, ...fillings.map((item: TIngredientProps) => item._id)];
     openModal();
     dispatch(createOrder(ingredientsIds));
   };
+  if (order) {
+  console.log(order.number)}
 
   return (
     <div className={styles.container} ref={containerRef}>
@@ -217,7 +219,10 @@ export default function BurgerConstructor(): React.JSX.Element {
       {isModalOpen && (
         <Modal onClose={closeModal} closeStyle='absolute'>
           {loading ? (
-            <Preloader />
+            <div className={styles.waiting}>
+            <p className='text text_type_main-large'>Оформляем заказ...</p>
+            <Preloader /> 
+            </div>
           ) : order ? (
             <OrderDetails orderNumber={order.number} />
           ) : null}

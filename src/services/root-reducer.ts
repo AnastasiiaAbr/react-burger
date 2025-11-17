@@ -1,9 +1,11 @@
 import { combineReducers } from "redux";
-import ingredientsReducer from './ingredients-slice';
-import ingredientDetailsReducer from './ingredient-details-slice'
-import constructorReducer from './constructor-slice';
-import orderReducer from './order-slice';
-import userReducer from './user-slice';
+import ingredientsReducer from './slices/ingredients-slice';
+import ingredientDetailsReducer from './slices/ingredient-details-slice'
+import constructorReducer from './slices/constructor-slice';
+import orderReducer from './slices/order-slice';
+import userReducer from './slices/user-slice';
+import { feedOrderSlice } from "./slices/feed-order-slice";
+import { profileOrderSlice } from "./slices/profile-orders-slice";
 
 const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
@@ -11,6 +13,8 @@ const rootReducer = combineReducers({
   burgerConstructor: constructorReducer,
   orders: orderReducer,
   user: userReducer,
+  feedOrders: feedOrderSlice.reducer,
+  profileOrders: profileOrderSlice.reducer, 
 })
 
 export type RootState = ReturnType<typeof rootReducer>

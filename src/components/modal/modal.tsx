@@ -27,12 +27,13 @@ const Modal = ({title, onClose, children, closeStyle}: TModalProps): React.JSX.E
     <>
     <ModalOverlay onClose={onClose} />
       <div className={styles.content} onClick={(e) => e.stopPropagation()}>
+      { title && 
         <header className={styles.header}>
           <h2 className="text text_type_main-large">{title}</h2>
           <button type='button' className={`${styles.closeButton} ${styles[closeStyle]}`} onClick={onClose}>
             <CloseIcon type='primary' />
             </button>
-        </header>
+        </header>}
 
         <div className={styles.mainInfo}>{children}</div>
       </div>

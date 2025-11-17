@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useAppDispatch } from "../../services/store";
 import { Tab, CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './burger-ingredients.module.css';
 import Modal from "../modal/modal";
 import IngredientDetails from "../ingredient-details/ingredient-details";
 import { useDrag } from "react-dnd";
 
-import { selectIngredient } from '../../services/ingredients-slice';
-import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/constructor-slice";
-import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/ingredient-details-slice";
+import { selectIngredient } from '../../services/slices/ingredients-slice';
+import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/slices/constructor-slice";
+import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/slices/ingredient-details-slice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {  TIngredientProps } from "../../utils/types/ingredient-types";
 
@@ -84,7 +84,7 @@ function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredien
 
 
 export default function BurgerIngredients() : React.JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 

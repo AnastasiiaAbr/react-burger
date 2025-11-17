@@ -31,7 +31,7 @@ const AppHeader = ({className}: TAppHeaderProps): React.JSX.Element => {
               </>
             )}
           </NavLink>
-          <NavLink to='/list'
+          <NavLink to='/feed'
             className={({ isActive }) =>
               `mt-4 mb-4 pl-5 pr-5 ${styles.iconWrapper} ${isActive ? styles.link_active : styles.link}`
             }

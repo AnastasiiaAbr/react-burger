@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, nanoid } from "@reduxjs/toolkit";
-import { TIngredientProps } from "../utils/types/ingredient-types";
-import { RootState } from "./root-reducer";
+import { TIngredientProps } from "../../utils/types/ingredient-types";
+import { RootState } from "../root-reducer";
 
 type TIngredientWithId = TIngredientProps & { _uniqueId: string };
 

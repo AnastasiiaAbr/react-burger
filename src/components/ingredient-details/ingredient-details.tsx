@@ -2,7 +2,7 @@ import React from "react";
 import styles from './ingredient-details.module.css';
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectIngredient } from "../../services/ingredients-slice";
+import { selectIngredient } from "../../services//slices/ingredients-slice";
 import { TIngredientDetailProps, TIngredientProps } from "../../utils/types/ingredient-types";
 
 const IngredientDetails = ({ingredient}: TIngredientDetailProps): React.JSX.Element => {

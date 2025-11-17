@@ -1,9 +1,9 @@
-import { API } from "../utils/api";
-import { request } from "../utils/request";
+import { API } from "../../utils/api";
+import { request } from "../../utils/request";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { saveTokens } from "../utils/token-helpers";
-import { handleRejected, handleFulfilledUser, handlePending, handleFulfilledLogout, handleFulfilledRefresh } from "../utils/user-slice-helpers";
-import { RootState } from "./root-reducer";
+import { saveTokens } from "../../utils/token-helpers";
+import { handleRejected, handleFulfilledUser, handlePending, handleFulfilledLogout, handleFulfilledRefresh } from "../../utils/user-slice-helpers";
+import { RootState } from "../root-reducer";
 
 type TUser = {
   name: string;
