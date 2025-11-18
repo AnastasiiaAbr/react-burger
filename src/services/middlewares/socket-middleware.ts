@@ -43,9 +43,16 @@ export const socketMiddleware = <A, B>(
     return (next) => (action: unknown) => {
       if (wsConnect.match(action)) {
         url = action.payload;
-        socket = new WebSocket(url);
-        isConnected = true;
+
         onConnecting && dispatch(onConnecting());
+
+        try {
+          socket = new WebSocket(url);
+        } catch {
+          dispatch(onError('WebSocket не может подключиться'));
+          return;
+        }
+        isConnected = true;
 
         socket.onopen = () => {
           onOpen && dispatch(onOpen());
@@ -60,7 +67,9 @@ export const socketMiddleware = <A, B>(
           }
         };
         socket.onerror = () => {
-          dispatch(onError("Error"));
+          if (process.env.NODE_ENV === 'production') {
+            dispatch(onError("WebSocket ошибка"));
+          }
         };
         socket.onmessage = async (event) => {
           try {
@@ -100,7 +109,7 @@ export const socketMiddleware = <A, B>(
       }
 
       if (socket && sendMessage?.match(action)) {
-        const {payload} = action;
+        const { payload } = action;
 
         try {
           socket.send(JSON.stringify(payload));

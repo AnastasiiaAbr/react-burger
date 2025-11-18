@@ -156,9 +156,6 @@ export default function BurgerConstructor(): React.JSX.Element {
     openModal();
     dispatch(createOrder(ingredientsIds));
   };
-  if (order) {
-  console.log(order.number)}
-
   return (
     <div className={styles.container} ref={containerRef}>
       {bun && (
@@ -220,7 +217,6 @@ export default function BurgerConstructor(): React.JSX.Element {
         <Modal onClose={closeModal} closeStyle='absolute'>
           {loading ? (
             <div className={styles.waiting}>
-            <p className='text text_type_main-large'>Оформляем заказ...</p>
             <Preloader /> 
             </div>
           ) : order ? (

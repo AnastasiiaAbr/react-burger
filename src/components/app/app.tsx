@@ -30,6 +30,7 @@ import { TOrderFromWs } from '../../services/slices/ws-slice';
 import { OrderModalContent } from '../wsorder-content/wsorder-content';
 import { TOrder } from '../../utils/types/order-types';
 import { TIngredientProps } from '../../utils/types/ingredient-types';
+import { OrderDetailPage } from '../../pages/order-details/order-details';
 
 
 function App(): React.JSX.Element {
@@ -51,6 +52,7 @@ function App(): React.JSX.Element {
   const profileOrders = useSelector((state: RootState) => state.profileOrders.orders);
   const feedOrders = useSelector((state: RootState) => state.feedOrders.orders);
   const allIngredients = useSelector((state: RootState) => state.ingredients.items);
+
 
   useEffect(() => {
     dispatch(fetchIngredients());
@@ -88,7 +90,6 @@ function App(): React.JSX.Element {
         sessionStorage.setItem('feedId', feedId);
       }
     }
-
     if (background && location.pathname.startsWith('/profile/orders/')) {
       const profileId = location.pathname.split('/').pop();
       if (profileId) {
@@ -171,11 +172,24 @@ function App(): React.JSX.Element {
 
       <Routes location={location}>
         <Route path='/' element={<Home />} />
-        <Route path='/profile' element={<Protected component={<ProfileLayout />} />}>
+        <Route path="/profile" element={<Protected component={<ProfileLayout />} />}>
           <Route index element={<ProfilePage />} />
-          <Route path='orders' element={<Protected component={<ProfileOrders />} />} />
-          <Route path='orders/:id' element={<Protected component={<ProfileOrders />} />} />
+          <Route path="orders" element={<Protected component={<ProfileOrders />} />} />
         </Route>
+
+        <Route
+          path="/profile/orders/:id"
+          element={
+            background && profileOrder ? (
+              <Modal onClose={handleCloseModal} closeStyle="absolute" title="">
+                <OrderModalContent order={profileOrder} />
+              </Modal>
+            ) : (
+              <OrderDetailPage wsOrders={profileOrders} allIngredients={allIngredients} />
+            )
+          }
+        />
+
 
         <Route path='/register' element={<Protected onlyUnAuth component={<Register />} />} />
         <Route path='/login' element={<Protected onlyUnAuth component={<Login />} />} />
@@ -184,7 +198,18 @@ function App(): React.JSX.Element {
 
         <Route path='/ingredients/:ingredientId' element={<IngredientDetails />} />
         <Route path='/feed' element={<FeedPage />} />
-        <Route path='/feed/:id' element={<FeedPage />} />
+        <Route
+          path="/feed/:id"
+          element={
+            background && order ? (
+              <Modal onClose={handleCloseModal} closeStyle="absolute" title="">
+                <OrderModalContent order={order} />
+              </Modal>
+            ) : (
+              <OrderDetailPage wsOrders={feedOrders} allIngredients={allIngredients} />
+            )
+          }
+        />
       </Routes>
 
       {activeBackground && activeIngredientId && (
@@ -200,36 +225,8 @@ function App(): React.JSX.Element {
         </Routes>
       )}
 
-      {activeBackground && activeFeedId && order && (
-
-        <Routes>
-          <Route
-            path="/feed/:id"
-            element={
-              <Modal onClose={handleCloseModal} closeStyle="absolute" title=''>
-                <OrderModalContent order={order} />
-              </Modal>
-            }
-          />
-        </Routes>
-      )}
-
-      {activeBackground && activeProfileOrdId && profileOrder && (
-
-        <Routes>
-          <Route
-            path="/profile/orders/:id"
-            element={
-              <Modal onClose={handleCloseModal} closeStyle="absolute" title=''>
-                <OrderModalContent order={profileOrder} />
-              </Modal>
-            }
-          />
-        </Routes>
-      )}
     </>
   );
+
 }
-
 export default App;
-

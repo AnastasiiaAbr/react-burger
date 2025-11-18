@@ -19,13 +19,11 @@ export function ProfileOrders() {
   const { id } = useParams<{ id: string }>();
   const stateBackground = (location.state as any)?.background;
 
-  const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
-
   const allIngredients = useSelector(
     (state: RootState) => state.ingredients.items
   ) as TIngredientProps[];
 
-    const { orders = [] } = useSelector(
+  const { orders = [] } = useSelector(
     (state: RootState) => state.profileOrders ?? {}
   );
 
@@ -55,15 +53,29 @@ export function ProfileOrders() {
     };
   });
 
+  const orderById = id ? ordersWithDetails.find(order => order.number.toString() === id) : null;
+
   const handleOrderClick = (order: TOrder) => {
-    setSelectedOrder(order);
-    navigate(`/profile/orders/${order.number}`, {state: {background: location}});
+    navigate(`/profile/orders/${order.number}`, { state: { background: location } });
   };
 
   const closeModal = () => {
-    setSelectedOrder(null);
     navigate(-1);
   };
+
+  if (id && !stateBackground) {
+    return orderById ? (
+      <main className={styles.page}>
+        <Modal title='' onClose={closeModal} closeStyle="absolute">
+          <OrderModalContent order={orderById} />
+        </Modal>
+      </main>
+    ) : (
+      <main className={styles.page}>
+        <p>Заказ не найден</p>
+      </main>
+    );
+  }
 
   return (
     <main className={styles.page}>
@@ -81,9 +93,9 @@ export function ProfileOrders() {
         </ul>
       </section>
 
-      {selectedOrder && (
+      {stateBackground && orderById && (
         <Modal title='' onClose={closeModal} closeStyle="absolute">
-          <OrderModalContent order={selectedOrder} />
+          <OrderModalContent order={orderById} />
         </Modal>
       )}
     </main>
