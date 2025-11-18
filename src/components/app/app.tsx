@@ -180,13 +180,15 @@ function App(): React.JSX.Element {
         <Route
           path="/profile/orders/:id"
           element={
-            background && profileOrder ? (
-              <Modal onClose={handleCloseModal} closeStyle="absolute" title="">
-                <OrderModalContent order={profileOrder} />
-              </Modal>
-            ) : (
-              <OrderDetailPage wsOrders={profileOrders} allIngredients={allIngredients} />
-            )
+            <Protected component={
+              background && profileOrder ? (
+                <Modal onClose={handleCloseModal} closeStyle="absolute" title="">
+                  <OrderModalContent order={profileOrder} />
+                </Modal>
+              ) : (
+                <OrderDetailPage wsOrders={profileOrders} allIngredients={allIngredients} />
+              )
+            } />
           }
         />
 
