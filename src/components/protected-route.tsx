@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector } from "../services/store";
 import { selectIsAuthChecked, selectUser } from "../services//slices/user-slice";
 import { Navigate, useLocation } from "react-router-dom";
 import Preloader from "./preloader/preloader";

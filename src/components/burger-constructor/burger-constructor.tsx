@@ -207,23 +207,32 @@ export default function BurgerConstructor(): React.JSX.Element {
             type='primary'
             size='large'
             onClick={handleOrderClick}
+            disabled={!bun || loading}
           >
-            {loading ? 'Оформляем заказ' : 'Оформить заказ'}
+            {loading ? 'Оформляем заказ...' : 'Оформить заказ'}
           </Button>
         </div>
       )}
 
-      {isModalOpen && (
-        <Modal onClose={closeModal} closeStyle='absolute'>
-          {loading ? (
-            <div className={styles.waiting}>
-            <Preloader /> 
-            </div>
-          ) : order ? (
-            <OrderDetails orderNumber={order.number} />
-          ) : null}
+      {loading && (
+        <div className={styles.preloaderWrapper}>
+          <Preloader />
+        </div>
+      )}
+
+      {!loading && order && isModalOpen && (
+        <Modal
+          onClose={() => {
+            closeModal();
+            dispatch(clearConstructor());
+          }}
+          title=''
+          titleStyle='none'
+        >
+          <OrderDetails orderNumber={order.number} />
         </Modal>
       )}
+
     </div>
   );
 }

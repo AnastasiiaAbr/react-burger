@@ -29,9 +29,6 @@ export function OrderModalContent({ order }: OrderModalContentProps): React.JSX.
 
   return (
     <div className={styles.modal}>
-      <p className={`${styles.modalNumber} text text_type_digits-default`}>
-        #{order.number}
-      </p>
       <p className={`${styles.ingredientName} text text_type_main-medium`}>
         {order.name}
       </p>

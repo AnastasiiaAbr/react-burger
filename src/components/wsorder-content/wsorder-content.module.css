@@ -1,19 +1,9 @@
-.modal {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  flex-direction: column;
-  padding: 8px;
-  background-color: #131316;
-  max-height: 640px;
-}
-
 .ingredientItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 64px;
-  gap: 16px;
+  gap: 20px;
   color: #F2F2F3;
 }
 
@@ -59,12 +49,7 @@
 }
 
 .listModal {
+  width: 100%;
   overflow-y: auto;
-  width: 95%;
   max-height: 60vh;
-  padding-right: 24px;
-}
-
-.modalNumber {
-  margin: 0 auto;
 }

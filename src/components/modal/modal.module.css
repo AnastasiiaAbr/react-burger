@@ -7,28 +7,37 @@
   border-radius: 20px;
   z-index: 10000;
   width: 720px;
+  padding: 40px;
+  box-sizing: border-box;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 40px 40px 0 40px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  width: 100%;
 }
 
-.closeButton.absolute {
-  position: absolute;
-  top: 60px;
-  right: 40px;
+.mainTitle {
+  color: #F2F2F3;
+  font-weight: 700;
+  font-size: 36px;
+}
+
+.numberTitle {
+  color: #F2F2F3;
+}
+
+
+.closeButton {
   background: transparent;
   border: none;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
-.closeButton.inline {
-  position: static;
-  margin-left: auto;
-  background: transparent;
-  border: none;
-  cursor: pointer;
+.mainInfo {
+  margin-top: 16px;
+  color: #FFFFFF;
 }

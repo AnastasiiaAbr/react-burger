@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './feed.module.css';
 import { OrderCard } from '../../components/order-card/order-card';
 import { useAppDispatch, useSelector } from '../../services/store';
-import { RootState } from '../../services/root-reducer';
 import { TIngredientProps } from '../../utils/types/ingredient-types';
 import { TOrder } from '../../utils/types/order-types';
 import { TOrderFromWs } from '../../services/slices/ws-slice';
@@ -19,10 +18,10 @@ export function FeedPage(): React.JSX.Element {
   const location = useLocation();
 
   const { orders = [], total = 0, totalToday = 0, loading } = useSelector(
-    (state: RootState) => state.feedOrders ?? {}
+    (state) => state.feedOrders ?? {}
   );
   const allIngredients = useSelector(
-    (state: RootState) => state.ingredients.items
+    (state) => state.ingredients.items
   ) as TIngredientProps[];
 
   const [selectedOrder, setSelectedOrder] = useState<TOrder | null>(null);
@@ -39,7 +38,7 @@ export function FeedPage(): React.JSX.Element {
     return (
       <main className={styles.page}>
         <p className={styles.loader}>Загрузка ленты заказов...</p>
-        <Preloader/>
+        <Preloader />
       </main>
     );
   }
@@ -120,7 +119,11 @@ export function FeedPage(): React.JSX.Element {
       </main>
 
       {selectedOrder && (
-        <Modal title="" onClose={closeModal} closeStyle="absolute">
+        <Modal
+          title={`#${selectedOrder.number}`}
+          onClose={closeModal}
+          titleStyle='number'
+        >
           <OrderModalContent order={selectedOrder} />
         </Modal>
       )}
