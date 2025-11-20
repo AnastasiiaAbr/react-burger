@@ -55,7 +55,7 @@ function App(): React.JSX.Element {
   const orderId = Number(location.pathname.split('/').pop());
 
   const profileOrder = useOrderFromWs(profileOrders, allIngredients, orderId);
-  const order = useOrderFromWs(feedOrders, allIngredients);
+  const order = useOrderFromWs(feedOrders, allIngredients, orderId);
   if (loading) return <p>Wait</p>;
   if (error) return <p>Ошибка: {error}</p>;
 
