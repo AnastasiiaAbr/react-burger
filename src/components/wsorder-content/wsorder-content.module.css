@@ -1,0 +1,55 @@
+.ingredientItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 64px;
+  gap: 20px;
+  color: #F2F2F3;
+}
+
+.leftSide {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.ingredientPrice {
+  display: flex;
+  align-items: center; 
+  gap: 4px;
+}
+
+.ingredientImage {
+  height: 64px;
+  width: 64px;
+  border-radius: 50%;
+  border: 2px solid #801AB2;
+  object-fit: cover;
+  display: block;
+}
+
+.ingredientName {
+  margin: 40px 0 12px;
+}
+
+.ingredientContains {
+  margin: 60px 0 24px;
+}
+
+.statusDone {
+  color: #00CCCC;
+}
+
+.bottomModal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.listModal {
+  width: 100%;
+  overflow-y: auto;
+  max-height: 60vh;
+}

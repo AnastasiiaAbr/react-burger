@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import styles from './profile.module.css';
-import { Input, PasswordInput, EmailInput, Button } from '@ya.praktikum/react-developer-burger-ui-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { updateUser, logoutUser } from '../../services/user-slice';
-import { useForm } from '../../hooks/useForm';
+import { Input, PasswordInput, Button } from '@ya.praktikum/react-developer-burger-ui-components';
+import { useAppDispatch, useSelector } from '../../../services/store';
+import { updateUser } from '../../../services//slices/user-slice';
+import { useForm } from '../../../hooks/useForm';
+import styles from './profile-page.module.css'
 
 
-const Profile = (): React.JSX.Element => {
-  // @ts-expect-error 'Sprint5'
+const ProfilePage = (): React.JSX.Element => {
   const { user } = useSelector(state => state.user);
   const { values: form, handleChange, setValues } = useForm({
     name: '',
@@ -16,8 +14,7 @@ const Profile = (): React.JSX.Element => {
     password: ''
   });
   const [isChanged, setIsChanged] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (user) {
@@ -35,54 +32,23 @@ const Profile = (): React.JSX.Element => {
   }
 
   const handleCancel = (): void => {
+    if (user) {
     setValues({
       name: user.name || '',
       email: user.email || '',
       password: ''
     });
+  }
     setIsChanged(false);
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    // @ts-expect-error 'Sprint5'
     dispatch(updateUser(form));
     setIsChanged(false);
   };
 
-  const handleLogout = (): void => {
-    // @ts-expect-error 'Sprint5'
-    dispatch(logoutUser()).then(() => navigate('/login', { replace: true }));
-  };
-
   return (
-    <>
-      <div className={styles.container}>
-        <nav className={styles.menu}>
-          <NavLink
-            to='/profile'
-            end
-            className={({ isActive }) => `${styles.link} text text_type_main-medium ${isActive ? styles.link_active : 'text_color_inactive'}`}>
-            Профиль
-          </NavLink>
-
-          <NavLink
-            to='/profile/orders'
-            end
-            className={({ isActive }) => `${styles.link} text text_type_main-medium ${isActive ? styles.link_active : 'text_color_inactive'}`}>
-            История заказов
-          </NavLink>
-
-          <button
-            onClick={handleLogout}
-            className={`${styles.logout} ${styles.link} text text_type_main-medium text_color_inactive`}>
-            Выход
-          </button>
-          <p className={`${styles.text} text text_type_main-default text_color_inactive`}>
-            В этом разделе вы можете изменить свои персональные данные
-          </p>
-        </nav>
-
         <form className={styles.form} onSubmit={handleSubmit}>
           <Input
             name="name"
@@ -113,9 +79,7 @@ const Profile = (): React.JSX.Element => {
             </div>
           )}
         </form>
-      </div>
-    </>
   );
 }
 
-export default Profile;
+export default ProfilePage;

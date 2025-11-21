@@ -2,12 +2,12 @@ import styles from './register.module.css';
 import { EmailInput, Button, Input, PasswordInput } from '@ya.praktikum/react-developer-burger-ui-components';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { registerUser } from '../../services/user-slice';
+import { useAppDispatch } from '../../services/store';
+import { registerUser } from '../../services/slices/user-slice';
 import { useForm } from '../../hooks/useForm';
 
 const Register = (): React.JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { values, handleChange } = useForm({
     name: '',
@@ -17,7 +17,6 @@ const Register = (): React.JSX.Element => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // @ts-expect-error 'Sprint5'
     const result = await dispatch(registerUser({ email: values.email, password: values.password, name: values.name }));
 
     if (registerUser.fulfilled.match(result)) {

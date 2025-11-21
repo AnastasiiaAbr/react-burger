@@ -1,14 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useAppDispatch } from "../../services/store";
 import { Tab, CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './burger-ingredients.module.css';
-import Modal from "../modal/modal";
-import IngredientDetails from "../ingredient-details/ingredient-details";
 import { useDrag } from "react-dnd";
 
-import { selectIngredient } from '../../services/ingredients-slice';
-import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/constructor-slice";
-import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/ingredient-details-slice";
+import { selectIngredient } from '../../services/slices/ingredients-slice';
+import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/slices/constructor-slice";
+import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/slices/ingredient-details-slice";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {  TIngredientProps } from "../../utils/types/ingredient-types";
 
@@ -49,7 +47,7 @@ type TIngredientCategoryProps = {
   title: string;
   items: TIngredientProps[];
   innerRef: React.RefObject<HTMLDivElement | null>;
-  bun: TIngredientProps;
+  bun: TIngredientProps | null;
   fillings: TIngredientProps[];
   onIngredientClick: (ingredient: TIngredientProps) => void;
 };
@@ -82,17 +80,12 @@ function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredien
   );
 }
 
-
 export default function BurgerIngredients() : React.JSX.Element {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const dispatch = useAppDispatch();
 
   const ingredients = useSelector(selectIngredient) as TIngredientProps[];
   const bun = useSelector(selectConstructorBun);
   const fillings = useSelector(selectConstructorFillings);
-  const selectedIngredient = useSelector(selectIngredientDetails);
-  const background = location.state?.background;
 
 
   const [currentTab, setCurrentTab] = useState('bun');
@@ -145,7 +138,6 @@ export default function BurgerIngredients() : React.JSX.Element {
     } else {
       dispatch(addFilling(ingredient));
     };
-    navigate(`/ingredients/${ingredient._id}`, { state: { background: location } })
   };
 
   return (
@@ -165,12 +157,6 @@ export default function BurgerIngredients() : React.JSX.Element {
           <IngredientCategory title='Начинки' items={mains} innerRef={mainRef} bun={bun} fillings={fillings} onIngredientClick={handleIngredientClick} />
         </div>
       </div >
-
-      {background && selectedIngredient && (
-        <Modal title="Детали ингредиента" onClose={() => navigate(-1)} closeStyle="inline">
-          <IngredientDetails ingredient={selectedIngredient} />
-        </Modal>
-      )}
     </>
   );
 }

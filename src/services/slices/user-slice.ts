@@ -1,10 +1,37 @@
- import { API } from "../utils/api";
-import { request } from "../utils/request";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { saveTokens } from "../utils/token-helpers";
-import { handleRejected, handleFulfilledUser, handlePending, handleFulfilledLogout, handleFulfilledRefresh } from "../utils/user-slice-helpers";
+import { API } from "../../utils/api";
+import { request } from "../../utils/request";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { saveTokens } from "../../utils/token-helpers";
+import { handleRejected, handleFulfilledUser, handlePending, handleFulfilledLogout, handleFulfilledRefresh } from "../../utils/user-slice-helpers";
+import { RootState } from "../root-reducer";
 
-const initialState = {
+type TUser = {
+  name: string;
+  email: string;
+}
+
+type TInitialRegisterState = {
+  user: null | TUser;
+  accessToken: null | string;
+  refreshToken: null | string;
+  loading: boolean;
+  error: null | string;
+  isAuthChecked: boolean;
+};
+
+type TAPIPayload = {
+  email: string;
+  name?: string;
+  password: string;
+};
+
+type TAPIResponse = {
+  user: TUser;
+  accessToken: string;
+  refreshToken: string;
+};
+
+const initialState: TInitialRegisterState = {
   user: null,
   accessToken: null,
   refreshToken: null,
@@ -12,12 +39,20 @@ const initialState = {
   error: null,
   isAuthChecked: false,
 };
-export const registerUser = createAsyncThunk(
+
+type TServerResponse = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+  user: TUser;
+};
+
+export const registerUser = createAsyncThunk<TAPIResponse, TAPIPayload, { rejectValue: string }>(
   'user/register',
   async ({ email, password, name }, thunkAPI) => {
-    const {dispatch, rejectWithValue} = thunkAPI;
+    const { dispatch, rejectWithValue } = thunkAPI;
     try {
-      const data = await request(API.AUTH_REGISTER, {
+      const response = await request<TServerResponse>(API.AUTH_REGISTER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,43 +60,47 @@ export const registerUser = createAsyncThunk(
         body: JSON.stringify({ email, password, name })
       });
 
-      saveTokens(data.accessToken, data.refreshToken);
-      dispatch(setUser(data.user));
+      const { accessToken, refreshToken, user } = response;
+
+      saveTokens(accessToken, refreshToken);
+      dispatch(setUser(user));
       return {
-        user: data.user,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
+        user,
+        accessToken,
+        refreshToken
       };
-    } catch (err) {
+    } catch (err: any) {
       return rejectWithValue(err.message || 'Ошибка регистрации')
     }
   });
 
-export const loginUser = createAsyncThunk(
+export const loginUser = createAsyncThunk<TAPIResponse, TAPIPayload, { rejectValue: string }>(
   'user/login',
   async ({ email, password }, thunkAPI) => {
-    const {dispatch, rejectWithValue} = thunkAPI;
+    const { dispatch, rejectWithValue } = thunkAPI;
     try {
-      const data = await request(API.AUTH_LOGIN, {
+      const response = await request<TServerResponse>(API.AUTH_LOGIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password })
       });
-      saveTokens(data.accessToken, data.refreshToken);
-      dispatch(setUser(data.user))
+      const { accessToken, refreshToken, user } = response;
+
+      saveTokens(accessToken, refreshToken);
+      dispatch(setUser(user));
       return {
-        user: data.user,
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
+        user,
+        accessToken,
+        refreshToken
       };
-    } catch (err) {
+    } catch (err: any) {
       return rejectWithValue(err.message || 'Ошибка авторизации');
     }
   });
 
-export const logoutUser = createAsyncThunk(
+export const logoutUser = createAsyncThunk<any, void, { rejectValue: string }>(
   'user/logout',
   async (_, { rejectWithValue }) => {
     try {
@@ -78,19 +117,24 @@ export const logoutUser = createAsyncThunk(
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       return response;
-    } catch (err) {
+    } catch (err: any) {
       return rejectWithValue(err.message || 'Ошибка при выходе из системы');
     }
   });
 
-export const refreshAccessToken = createAsyncThunk(
+type TRefreshResponse = {
+  refreshToken: string;
+  accessToken: string;
+}
+
+export const refreshAccessToken = createAsyncThunk<TRefreshResponse, void, { rejectValue: string }>(
   'user/refreshToken',
   async (_, { rejectWithValue }) => {
     try {
       const refreshToken = localStorage.getItem('refreshToken');
       if (!refreshToken) throw new Error('Отсутствует refreshToken');
 
-      const data = await request(API.AUTH_TOKEN, {
+      const response = await request<{ accessToken: string, refreshToken: string }>(API.AUTH_TOKEN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -98,25 +142,31 @@ export const refreshAccessToken = createAsyncThunk(
         body: JSON.stringify({ token: refreshToken })
       });
 
-      saveTokens(data.accessToken, data.refreshToken);
+      const { accessToken, refreshToken: newRefreshToken } = response;
+
+      saveTokens(accessToken, newRefreshToken);
       return {
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
+        accessToken,
+        refreshToken: newRefreshToken,
       };
-    } catch (err) {
+    } catch (err: any) {
       return rejectWithValue(err.message || 'Ошибка при обновлении токена');
     }
   });
 
-export const checkUserAuth = createAsyncThunk(
+type TUserResponse = {
+  user: TUser;
+};
+
+export const checkUserAuth = createAsyncThunk<void, void, { rejectValue: string }>(
   'user/checkUserAuth',
   async (_, { dispatch }) => {
     const accessToken = localStorage.getItem('accessToken');
     const refreshToken = localStorage.getItem('refreshToken');
-    
+
     if (accessToken && refreshToken) {
       try {
-        const data = await request(API.AUTH_USER, {
+        const data = await request<TUserResponse>(API.AUTH_USER, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -127,10 +177,10 @@ export const checkUserAuth = createAsyncThunk(
         });
         dispatch(setUser(data.user));
       } catch {
-             const refreshResult = await dispatch(refreshAccessToken());
+        const refreshResult = await dispatch(refreshAccessToken());
         if (refreshAccessToken.fulfilled.match(refreshResult)) {
           const newAccessToken = refreshResult.payload.accessToken;
-          const userData = await request(API.AUTH_USER, {
+          const userData = await request<TUserResponse>(API.AUTH_USER, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -149,25 +199,26 @@ export const checkUserAuth = createAsyncThunk(
     }
   });
 
-export const updateUser = createAsyncThunk(
+export const updateUser = createAsyncThunk<TUser, Partial<TUser>, {rejectValue: string}>(
   'user/updateUser',
-  async(userData, {rejectWithValue}) => {
+  async (userData, { rejectWithValue }) => {
     try {
       const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) throw new Error('Отсутствует accessToken');
 
-      const data = await request(API.AUTH_USER, {
+      const response = await request<TUserResponse>(API.AUTH_USER, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: accessToken.startsWith('Bearer')
-          ? accessToken :
-          `Bearer ${accessToken}`,
+            ? accessToken :
+            `Bearer ${accessToken}`,
         },
         body: JSON.stringify(userData),
       });
 
-      return data.user;
-    } catch (err) {
+      return response.user;
+    } catch (err: any) {
       return rejectWithValue(err.message || 'Ошибка при обновлении пользователя');
     }
   }
@@ -177,8 +228,8 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setIsAuthChecked: (state, action) => { state.isAuthChecked = action.payload; },
-    setUser: (state, action) => { state.user = action.payload; },
+    setIsAuthChecked: (state, action: PayloadAction<boolean>) => { state.isAuthChecked = action.payload; },
+    setUser: (state, action: PayloadAction<TUser| null>) => { state.user = action.payload; },
   },
   extraReducers:
     (builder) => {
@@ -200,7 +251,7 @@ const userSlice = createSlice({
         .addCase(refreshAccessToken.rejected, handleRejected)
 
         .addCase(updateUser.pending, handlePending)
-        .addCase(updateUser.fulfilled, (state, action) => {
+        .addCase(updateUser.fulfilled, (state, action: PayloadAction<TUser>) => {
           state.user = action.payload;
           state.error = null;
           state.loading = false;
@@ -210,8 +261,8 @@ const userSlice = createSlice({
 });
 
 export const { setIsAuthChecked, setUser } = userSlice.actions;
-export const selectUser = (state) => state.user.user;
-export const selectIsAuthChecked = (state) => state.user.isAuthChecked;
+export const selectUser = (state: RootState): TUser | null => state.user.user;
+export const selectIsAuthChecked = (state: RootState): boolean => state.user.isAuthChecked;
 
-export default userSlice.reducer; 
+export default userSlice.reducer;
 

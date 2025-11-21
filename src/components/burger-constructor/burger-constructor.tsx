@@ -5,7 +5,7 @@ import Modal from '../modal/modal';
 import OrderDetails from '../order-details/order-details';
 import { useModal } from '../../hooks/useModal';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useSelector } from '../../services/store';
 import {
   selectConstructorBun,
   selectConstructorFillings,
@@ -14,22 +14,22 @@ import {
   addFilling,
   moveFilling,
   clearConstructor
-} from '../../services/constructor-slice';
+} from '../../services/slices/constructor-slice';
 import {
   createOrder,
   selectCurrentOrder,
   selectOrderLoading
-} from '../../services/order-slice';
+} from '../../services/slices/order-slice';
 import Preloader from '../preloader/preloader';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { selectUser } from '../../services/user-slice';
+import { selectUser } from '../../services/slices/user-slice';
 import { TIngredientProps } from '../../utils/types/ingredient-types';
 
 type TFiilingCardProps = {
   ingredient: TIngredientProps;
   index: number;
   moveCard: (sourceIndex: number, targetIndex: number) => void;
-  onRemove: (id: number) => void;
+  onRemove: (id: string) => void;
 };
 
 interface IDragItem {
@@ -88,14 +88,14 @@ function FillingCard({ ingredient, index, moveCard, onRemove }: TFiilingCardProp
 }
 
 export default function BurgerConstructor(): React.JSX.Element {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { isModalOpen, openModal, closeModal } = useModal();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [{ isOver }, drop] = useDrop<TIngredientProps, void, {isOver: boolean}>({
+  const [{ isOver }, drop] = useDrop<TIngredientProps, void, { isOver: boolean }>({
     accept: 'ingredient',
     drop: (item) => {
       if (item.type === 'bun') {
@@ -131,7 +131,6 @@ export default function BurgerConstructor(): React.JSX.Element {
 
   useEffect(() => {
     if (order && !loading) {
-      //@ts-expect-error 'Sprint5'
       dispatch(clearConstructor());
     }
   }, [order, loading, dispatch]);
@@ -153,12 +152,10 @@ export default function BurgerConstructor(): React.JSX.Element {
       return;
     }
 
-    const ingredientsIds = [bun._id, ...fillings.map((item: TIngredientProps)  => item._id)];
+    const ingredientsIds = [bun._id, ...fillings.map((item: TIngredientProps) => item._id)];
     openModal();
-    //@ts-expect-error 'Sprint5'
     dispatch(createOrder(ingredientsIds));
   };
-
   return (
     <div className={styles.container} ref={containerRef}>
       {bun && (
@@ -210,21 +207,32 @@ export default function BurgerConstructor(): React.JSX.Element {
             type='primary'
             size='large'
             onClick={handleOrderClick}
+            disabled={!bun || loading}
           >
-            {loading ? 'Оформляем заказ' : 'Оформить заказ'}
+            {loading ? 'Оформляем заказ...' : 'Оформить заказ'}
           </Button>
         </div>
       )}
 
-      {isModalOpen && (
-        <Modal onClose={closeModal} closeStyle='absolute'>
-          {loading ? (
-            <Preloader />
-          ) : order ? (
-            <OrderDetails orderNumber={order.number} />
-          ) : null}
+      {loading && (
+        <div className={styles.preloaderWrapper}>
+          <Preloader />
+        </div>
+      )}
+
+      {!loading && order && isModalOpen && (
+        <Modal
+          onClose={() => {
+            closeModal();
+            dispatch(clearConstructor());
+          }}
+          title=''
+          titleStyle='none'
+        >
+          <OrderDetails orderNumber={order.number} />
         </Modal>
       )}
+
     </div>
   );
 }

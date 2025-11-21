@@ -1,0 +1,10 @@
+.feedList {
+  overflow-y: scroll;
+  max-height: 768px;
+  padding: 8px;
+}
+
+.card {
+  margin-bottom: 16px;
+  max-width: 796px;
+}

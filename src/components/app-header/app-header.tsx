@@ -12,17 +12,17 @@ type TAppHeaderProps = {
   className?: string;
 }
 
-const AppHeader = ({className}: TAppHeaderProps): React.JSX.Element => {
+const AppHeader = ({ className }: TAppHeaderProps): React.JSX.Element => {
   return (
     <header>
       <nav className={styles.nav}>
         <div className={styles.left}>
           <NavLink to='/'
-            className={({ isActive }: {isActive : boolean}) : string =>
+            className={({ isActive }: { isActive: boolean }): string =>
               `mt-4 mb-4 pl-5 pr-5 ${styles.iconWrapper} ${isActive ? styles.link_active : styles.link}`
             }
           >
-            {({ isActive }: {isActive: boolean}) => (
+            {({ isActive }: { isActive: boolean }) => (
               <>
                 <BurgerIcon type={isActive ? 'primary' : 'secondary'} />
                 <span className={`text text_type_main-small ml-2 ${isActive ? "text_color_primary" : "text_color_inactive"}`}>
@@ -31,7 +31,7 @@ const AppHeader = ({className}: TAppHeaderProps): React.JSX.Element => {
               </>
             )}
           </NavLink>
-          <NavLink to='/list'
+          <NavLink to='/feed'
             className={({ isActive }) =>
               `mt-4 mb-4 pl-5 pr-5 ${styles.iconWrapper} ${isActive ? styles.link_active : styles.link}`
             }
@@ -47,7 +47,9 @@ const AppHeader = ({className}: TAppHeaderProps): React.JSX.Element => {
           </NavLink>
         </div>
 
-        <Logo className="mt-4 mb-4" />
+        <NavLink to="/">
+          <Logo className="mt-4 mb-4" />
+        </NavLink>
 
         <div className={styles.right}>
           <NavLink to='/profile'
