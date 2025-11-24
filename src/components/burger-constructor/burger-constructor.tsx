@@ -71,7 +71,10 @@ function FillingCard({ ingredient, index, moveCard, onRemove }: TFiilingCardProp
   drag(drop(ref));
 
   return (
-    <div ref={ref} className={styles.ingredient}>
+    <div ref={ref}
+      className={styles.ingredient}
+      data-test='ingredient-filling'
+      data-uid={ingredient._uniqueId} >
       <DragIcon type='primary' />
       <ConstructorElement
         text={ingredient.name}
@@ -157,7 +160,7 @@ export default function BurgerConstructor(): React.JSX.Element {
     dispatch(createOrder(ingredientsIds));
   };
   return (
-    <div className={styles.container} ref={containerRef}>
+    <div className={styles.container} ref={containerRef} data-test='constructor-drop-area'>
       {bun && (
         <ConstructorElement
           type='top'
@@ -165,6 +168,7 @@ export default function BurgerConstructor(): React.JSX.Element {
           text={`${bun.name} (верх)`}
           price={bun.price}
           thumbnail={bun.image}
+          data-test='ingredient-bun'
         />
       )}
 
@@ -193,6 +197,7 @@ export default function BurgerConstructor(): React.JSX.Element {
           text={`${bun.name} (низ)`}
           price={bun.price}
           thumbnail={bun.image}
+          data-test='ingredient-bun'
         />
       )}
 
@@ -208,9 +213,10 @@ export default function BurgerConstructor(): React.JSX.Element {
             size='large'
             onClick={handleOrderClick}
             disabled={!bun || loading}
+            data-test='button-order'
           >
             {loading ? 'Оформляем заказ...' : 'Оформить заказ'}
-          </Button>
+          </Button >
         </div>
       )}
 
