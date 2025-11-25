@@ -27,8 +27,8 @@ describe('Swap ingredients and check keywords', () => {
       cy.wrap(elements[2].dataset.uid).as('uid2');
     });
 
-    cy.get('@uid1').then(uid1 => {
-      cy.get('@uid2').then(uid2 => {
+    cy.get('@uid1').then(uid2 => {
+      cy.get('@uid2').then(uid1 => {
         const dt = new DataTransfer();
 
         cy.get(SELECTORS.ingredientByUid(uid1))
@@ -48,25 +48,22 @@ describe('Swap ingredients and check keywords', () => {
 
         cy.get(SELECTORS.constructorDropArea)
           .find(SELECTORS.ingredientFilling)
-          .then(children => {
-            const arr = [...children];
+          .eq(0)
+          .invoke('text')
+          .should('contain', 'Spicy');
 
-            cy.get('@uid0').then(uid0 => {
-              cy.wrap(arr.find(el => el.dataset.uid === uid0)).invoke('text')
-                .should('contain', 'Spicy');
-            });
+        cy.get(SELECTORS.constructorDropArea)
+          .find(SELECTORS.ingredientFilling)
+          .eq(1)
+          .invoke('text')
+          .should('contain', 'галактический');
 
-            cy.get('@uid1').then(uid1 => {
-              cy.wrap(arr.find(el => el.dataset.uid === uid1)).invoke('text')
-                .should('contain', 'Space');
-            });
-
-            cy.get('@uid2').then(uid2 => {
-              cy.wrap(arr.find(el => el.dataset.uid === uid2)).invoke('text')
-                .should('contain', 'галактический');
+        cy.get(SELECTORS.constructorDropArea)
+          .find(SELECTORS.ingredientFilling)
+          .eq(2)
+          .invoke('text')
+          .should('contain', 'Space');
             });
           });
       });
     });
-  });
-});
