@@ -7,7 +7,7 @@ const SELECTORS = {
   constructorDropArea: '[data-test="constructor-drop-area"]',
 };
 
-describe('добавляет ингредиенты в конструктор', () => {
+describe('Swap ingredients and check keywords', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/ingredients').as('getIngredients');
     cy.visit('/');
@@ -20,7 +20,7 @@ describe('добавляет ингредиенты в конструктор', 
     cy.get(SELECTORS.ingredientFilling).should('have.length', 3);
   });
 
-  it('меняет порядок ингредиентов через drag-and-drop', () => {
+  it('меняет порядок ингредиентов через drag-and-drop и проверяет ключевые слова', () => {
     cy.get(SELECTORS.ingredientFilling).then(elements => {
       cy.wrap(elements[0].dataset.uid).as('uid0');
       cy.wrap(elements[1].dataset.uid).as('uid1');
@@ -48,18 +48,22 @@ describe('добавляет ингредиенты в конструктор', 
 
         cy.get(SELECTORS.constructorDropArea)
           .find(SELECTORS.ingredientFilling)
-          .should('have.length', 3)
           .then(children => {
             const arr = [...children];
 
             cy.get('@uid0').then(uid0 => {
-              expect(arr.findIndex(el => el.dataset.uid === uid0)).to.eq(0);
+              cy.wrap(arr.find(el => el.dataset.uid === uid0)).invoke('text')
+                .should('contain', 'Spicy');
             });
+
             cy.get('@uid1').then(uid1 => {
-              expect(arr.findIndex(el => el.dataset.uid === uid1)).to.eq(2); 
+              cy.wrap(arr.find(el => el.dataset.uid === uid1)).invoke('text')
+                .should('contain', 'Space');
             });
+
             cy.get('@uid2').then(uid2 => {
-              expect(arr.findIndex(el => el.dataset.uid === uid2)).to.eq(1);
+              cy.wrap(arr.find(el => el.dataset.uid === uid2)).invoke('text')
+                .should('contain', 'галактический');
             });
           });
       });
