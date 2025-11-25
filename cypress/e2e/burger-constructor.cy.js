@@ -2,11 +2,17 @@
 
 const SELECTORS = {
   ingredientCard: '[data-test="ingredient-card"]',
+  ingredientBun: '[data-test="ingredient-bun"]',
+  ingredientFilling: '[data-test="ingredient-filling"]',
   constructorDrop: '[data-test="constructor-drop-area"]',
+  buttonOrder: '[data-test="button-order"]',
   modalContent: '[data-test="modal"]',
   modalOverlay: '[data-test="modal-overlay"]',
   modalClose: '[data-test="modal-close"]',
+  ingredientCardBun: '[data-test="ingredient-card"][data-test-type="bun"]',
+  ingredientCardMain: '[data-test="ingredient-card"][data-test-type="main"]',
 }
+
 
 describe('Burger Constructor', () => {
   beforeEach(() => {
@@ -44,15 +50,15 @@ describe('Burger Constructor', () => {
   });
 
   it('добавляет ингредиент из списка в конструктор по клику', () => {
-    cy.get('[data-test="ingredient-bun"]').should('not.exist');
-    cy.get('[data-test="ingredient-card"][data-test-type="bun"]').first().click();
-    cy.get('[data-test="constructor-drop-area"]').contains('верх').should('exist');
+    cy.get(SELECTORS.ingredientBun).should('not.exist');
+    cy.get(SELECTORS.ingredientCardBun).first().click();
+    cy.get(SELECTORS.constructorDrop).contains('верх').should('exist');
     cy.get(SELECTORS.modalClose).click();
 
 
-    cy.get('[data-test="ingredient-filling"]').should('have.length', 0);
-    cy.get('[data-test="ingredient-card"][data-test-type="main"]').first().click();
-    cy.get('[data-test="ingredient-filling"]').should('have.length', 1);
+    cy.get(SELECTORS.ingredientFilling).should('have.length', 0);
+    cy.get(SELECTORS.ingredientCardMain).first().click();
+    cy.get(SELECTORS.ingredientFilling).should('have.length', 1);
     cy.get(SELECTORS.modalClose).click();
   });
 
@@ -65,20 +71,20 @@ describe('Burger Constructor', () => {
       }
     }).as('makeOrder');
 
-    cy.get('[data-test="ingredient-card"][data-test-type="bun"]').first().click();
-    cy.get('[data-test="constructor-drop-area"]').contains('верх').should('exist');
+    cy.get(SELECTORS.ingredientCardBun).first().click();
+    cy.get(SELECTORS.constructorDrop).contains('верх').should('exist');
     cy.get(SELECTORS.modalClose).click();
 
-    cy.get('[data-test="ingredient-card"][data-test-type="main"]').first().click();
-    cy.get('[data-test="ingredient-filling"]').should('have.length.at.least', 1);
+    cy.get(SELECTORS.ingredientCardMain).first().click();
+    cy.get(SELECTORS.ingredientFilling).should('have.length.at.least', 1);
     cy.get(SELECTORS.modalClose).click();
 
-    cy.get('[data-test="button-order"]').click();
+    cy.get(SELECTORS.buttonOrder).click();
 
     cy.wait('@makeOrder');
 
-    cy.get('[data-test="modal"]').should('be.visible');
-    cy.get('[data-test="modal"]').contains('12345').should('exist');
+    cy.get(SELECTORS.modalContent).should('be.visible');
+    cy.get(SELECTORS.modalContent).contains('12345').should('exist');
   });
 });
 
@@ -89,11 +95,11 @@ describe('burger constructor without login', () => {
     cy.wait('@getIngredients');
   })
   it('перенаправляет на страницу логина при отсутствии пользователя', () => {
-    cy.get('[data-test="ingredient-card"][data-test-type="bun"]').first().click();
+    cy.get(SELECTORS.ingredientCardBun).first().click();
     cy.get(SELECTORS.modalClose).click();
-    cy.get('[data-test="ingredient-card"][data-test-type="main"]').first().click();
+    cy.get(SELECTORS.ingredientCardMain).first().click();
     cy.get(SELECTORS.modalClose).click();
-    cy.get('[data-test="button-order"]').click();
+    cy.get(SELECTORS.buttonOrder).click();
 
     cy.url().should('include', '/login');
   });

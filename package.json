@@ -49,6 +49,8 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "cypress": "^15.7.0",
+    "cypress-drag-drop": "^1.1.1",
     "typescript": "^4.9.5"
-  }
+  },
+  "cypress": "cypress open cache clear"
 }
