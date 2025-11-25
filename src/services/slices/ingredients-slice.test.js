@@ -1,4 +1,4 @@
-import reducer, {fetchIngredients, selectIngredient, selectIngredientError, selectIngredientLoading} from './ingredients-slice';
+import reducer, {fetchIngredients, selectIngredient, selectIngredientError, selectIngredientLoading, initialState} from './ingredients-slice';
 
 import { request } from '../../utils/request';
 
@@ -7,11 +7,6 @@ jest.mock('../../utils/request', () => ({
 }));
 
 describe('ingredients slice', () => {
-  const initialState = {
-  items: [],
-  loading: false,
-  error: null,
-};
 
 describe('ingredients reducer', () => {
   test('pending устанавливает соединение' , () => {

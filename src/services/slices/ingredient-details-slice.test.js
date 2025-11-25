@@ -1,4 +1,4 @@
-import reducer, { setIngredient, clearIngredient } from "./ingredient-details-slice";
+import reducer, { setIngredient, clearIngredient, initialState } from "./ingredient-details-slice";
 
 describe('ingredient details slice', () => {
   const item = {
@@ -14,11 +14,7 @@ describe('ingredient details slice', () => {
     carbohydrates: 10,
     _uniqueId: 'id2'
   };
-
-  const initialState = {
-    item: null,
-  };
-
+  
   test('initialState', () => {
     expect(reducer(undefined, { item: undefined})).toEqual(initialState);
   });

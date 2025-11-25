@@ -4,7 +4,8 @@ import reducer, {
   clearOrder,
   selectCurrentOrder,
   selectOrderLoading,
-  selectOrderError
+  selectOrderError,
+  initialState
 } from './order-slice';
 
 jest.mock('../../utils/request', () => ({
@@ -12,13 +13,6 @@ jest.mock('../../utils/request', () => ({
 }));
 
 describe('order slice', () => {
-  const initialState = {
-    currentOrder: null,
-    loading: false,
-    error: null,
-  };
-
-
   describe('order reducer', () => {
     test('pending', () => {
       const state = reducer(initialState, { type: createOrder.pending.type });

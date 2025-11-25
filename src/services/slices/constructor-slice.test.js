@@ -5,7 +5,8 @@ import reducer, {
   clearConstructor,
   moveFilling,
   selectConstructorBun,
-  selectConstructorFillings
+  selectConstructorFillings,
+  initialState
 } from "./constructor-slice";
 
 jest.mock("@reduxjs/toolkit", () => {
@@ -45,11 +46,6 @@ describe("constructor slice", () => {
     image: "img",
     image_large: "img2",
     image_mobile: "img3"
-  };
-
-  const initialState = {
-    bun: null,
-    fillings: []
   };
 
   test("initial state", () => {

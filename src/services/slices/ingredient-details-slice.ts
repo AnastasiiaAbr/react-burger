@@ -5,7 +5,7 @@ import { RootState } from "../root-reducer";
 type TInitialState = {
   item: TIngredientProps | null;
 }
-const initialState : TInitialState = {
+export const initialState : TInitialState = {
   item: null
 };
 

@@ -19,7 +19,7 @@ type TInitialOrderState = {
   error: string | null;
 };
 
-const initialState: TInitialOrderState = {
+export const initialState: TInitialOrderState = {
   currentOrder: null,
   loading: false,
   error: null

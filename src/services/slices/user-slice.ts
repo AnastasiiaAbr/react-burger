@@ -31,7 +31,7 @@ type TAPIResponse = {
   refreshToken: string;
 };
 
-const initialState: TInitialRegisterState = {
+export const initialState: TInitialRegisterState = {
   user: null,
   accessToken: null,
   refreshToken: null,

@@ -1,18 +1,9 @@
-import { createWsSlice } from "./ws-slice";
+import { createWsSlice, initialState } from "./ws-slice";
 
 describe('createWsSlice', () => {
 test('works for feedOrderSlice', () => {
   const {slice, actions} = createWsSlice('feedOrders');
   const reducer = slice.reducer;
-
-  const initialState = {
-    wsConnected: false,
-  orders: [],
-  total: 0,
-  totalToday: 0,
-  error: null,
-  loading: false,
-  };
 
   expect(reducer(initialState, actions.onConnecting())).toEqual({
     ...initialState,

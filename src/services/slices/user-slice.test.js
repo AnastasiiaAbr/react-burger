@@ -9,6 +9,7 @@ import reducer, {
   refreshAccessToken,
   updateUser,
   checkUserAuth,
+  initialState
 } from './user-slice';
 import { request } from '../../utils/request';
 import * as tokenHelpers from '../../utils/token-helpers';
@@ -22,14 +23,6 @@ jest.mock('../../utils/token-helpers', () => ({
 }));
 
 describe('userSlice', () => {
-  const initialState = {
-    user: null,
-    accessToken: null,
-    refreshToken: null,
-    loading: false,
-    error: null,
-    isAuthChecked: false,
-  };
 
   beforeEach(() => {
     jest.clearAllMocks();
