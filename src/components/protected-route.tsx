@@ -2,14 +2,14 @@ import { useSelector } from "../services/store";
 import { selectIsAuthChecked, selectUser } from "../services//slices/user-slice";
 import { Navigate, useLocation } from "react-router-dom";
 import Preloader from "./preloader/preloader";
-import { ReactNode } from "react";
+import { ReactElement } from "react";
 
 type TProtectedProps = {
     onlyUnAuth?: boolean;
-    component: ReactNode;
+    component: ReactElement;
 };
 
-export const Protected = ({onlyUnAuth = false, component} : TProtectedProps) : ReactNode | null=> {
+export const Protected = ({onlyUnAuth = false, component} : TProtectedProps) : ReactElement | null=> {
     const user = useSelector(selectUser);
     const isAuthChecked = useSelector(selectIsAuthChecked);
     const location = useLocation();

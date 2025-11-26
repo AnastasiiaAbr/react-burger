@@ -24,8 +24,8 @@ const Modal = ({ title, onClose, titleStyle = "main", children }: TModalProps): 
 
   return ReactDOM.createPortal(
     <>
-      <ModalOverlay onClose={onClose} />
-      <div className={styles.content} onClick={(e) => e.stopPropagation()}>
+      <ModalOverlay onClose={onClose} data-test='modal-overlay'/>
+      <div className={styles.content} onClick={(e) => e.stopPropagation()} data-test='modal'>
         <header className={styles.header}>
           {titleStyle === "none" ? (
             <div />
@@ -41,7 +41,7 @@ const Modal = ({ title, onClose, titleStyle = "main", children }: TModalProps): 
           </h2>
   )}
 
-          <button type="button" className={styles.closeButton} onClick={onClose}>
+          <button type="button" className={styles.closeButton} onClick={onClose} data-test='modal-close'>
             <CloseIcon type="primary" />
           </button>
         </header>

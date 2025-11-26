@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { API } from "../../utils/api";
 import { request } from "../../utils/request";
 import { RootState } from "../root-reducer";
@@ -19,7 +19,7 @@ type TInitialOrderState = {
   error: string | null;
 };
 
-const initialState: TInitialOrderState = {
+export const initialState: TInitialOrderState = {
   currentOrder: null,
   loading: false,
   error: null

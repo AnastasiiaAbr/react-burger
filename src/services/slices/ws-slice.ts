@@ -24,7 +24,7 @@ type TInitialWsState = {
   loading: boolean;
 };
 
-const initialState: TInitialWsState = {
+export const initialState: TInitialWsState = {
   wsConnected: false,
   orders: [],
   total: 0,

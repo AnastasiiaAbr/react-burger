@@ -9,7 +9,7 @@ type TInitialConstructorState = {
   fillings: TIngredientWithId[];
 };
 
-const initialState: TInitialConstructorState = {
+export const initialState: TInitialConstructorState = {
   bun: null,
   fillings: []
 };
