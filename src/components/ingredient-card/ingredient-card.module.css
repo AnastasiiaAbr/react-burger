@@ -1,0 +1,21 @@
+.card {
+  padding: 8px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  box-sizing: border-box;
+  max-width: 272px;
+  position: relative;
+  color: #F2F2F3;
+}
+
+.card img {
+  max-width: 100%;
+  height: auto;
+}
+
+.card p {
+  text-align: center;
+  margin: 0;
+}

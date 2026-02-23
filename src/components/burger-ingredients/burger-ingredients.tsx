@@ -1,52 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useAppDispatch } from "../../services/store";
-import { Tab, CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
+import { Tab } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './burger-ingredients.module.css';
-import { useDrag } from "react-dnd";
+import IngredientCard from "../ingredient-card/ingredient-card";
 
 import { selectIngredient } from '../../services/slices/ingredients-slice';
 import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/slices/constructor-slice";
-import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/slices/ingredient-details-slice";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { setIngredient } from "../../services/slices/ingredient-details-slice";
 import { TIngredientProps } from "../../utils/types/ingredient-types";
-
-type TIngredientCardProps = {
-  ingredient: TIngredientProps;
-  count: number;
-  onClick: (ingredient: TIngredientProps) => void;
-}
-
-function IngredientCard({ ingredient, count = 0, onClick }: TIngredientCardProps): React.JSX.Element {
-  const location = useLocation();
-
-  const [{ isDragging }, dragRef] = useDrag<TIngredientProps, unknown, { isDragging: boolean }>({
-    type: 'ingredient',
-    item: ingredient,
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    })
-  });
-  return (
-    <div ref={dragRef as unknown as React.Ref<HTMLDivElement>}
-    data-test='ingredient-card-draggable'>
-      <Link
-        to={`/ingredients/${ingredient._id}`}
-        state={{ background: location }}
-      >
-        <div className={styles.card}
-          onClick={() => onClick(ingredient)}
-          data-test='ingredient-card'
-          data-test-type={ingredient.type}
-          data-id={ingredient._id}>
-          {count > 0 && <Counter count={count} size='default' data-test='ingredient-counter'/>}
-          <img src={ingredient.image} alt={ingredient.name} />
-          <p className="text text_type_main-medium">{ingredient.price} <CurrencyIcon type="primary" /></p>
-          <p className="text text_type_main-default">{ingredient.name}</p>
-        </div>
-      </Link>
-    </div>
-  )
-};
 
 type TIngredientCategoryProps = {
   title: string;
