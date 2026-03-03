@@ -66,3 +66,9 @@ ul {
 .totalNumberToday {
   margin-top: 60px;
 }
+
+@media (max-width: 768px) {
+  .feedList {
+    scrollbar-width: none;
+  }
+}

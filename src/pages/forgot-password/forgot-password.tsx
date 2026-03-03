@@ -6,11 +6,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { API } from "../../utils/api";
 import { request } from "../../utils/request";
 import { useForm } from "../../hooks/useForm";
+import useMediaQuery from "../../hooks/useMedia";
 
 const ForgotPassword = (): React.JSX.Element => {
   const { values, handleChange } = useForm({ email: '' });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 768px)')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ const ForgotPassword = (): React.JSX.Element => {
     type TForgotResponse = {
       success: boolean;
       message?: string;
-    } 
+    }
 
     request<TForgotResponse>(API.PASSWORD_RESET, {
       method: 'POST',
@@ -48,14 +50,17 @@ const ForgotPassword = (): React.JSX.Element => {
   return (
     <>
       <div className={styles.container}>
-        <p className="text text_type_main-medium">Восстановление пароля</p>
+        <p className={`text ${isMobile ? 'text_type_main-large' : 'text_type_main-medium'
+          }`}>Восстановление пароля</p>
         <form className={styles.form} onSubmit={handleSubmit}>
-          <EmailInput
-            name='email'
-            placeholder="Укажите e-mail"
-            value={values.email}
-            onChange={handleChange}
-          />
+          <div className={styles.inputWrapper}>
+            <EmailInput
+              name='email'
+              placeholder="Укажите e-mail"
+              value={values.email}
+              onChange={handleChange}
+            />
+          </div>
           <Button htmlType="submit" type="primary" size='medium' disabled={loading}>Восстановить</Button>
           <p className={`text text_type_main-default text_color_inactive ${styles.text}`}>Вспомнили пароль?
             <Link to='/login'> Войти</Link></p>

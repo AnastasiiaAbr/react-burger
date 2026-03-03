@@ -8,3 +8,14 @@
   margin-bottom: 16px;
   max-width: 796px;
 }
+
+.mobileTitle {
+  text-align: center;
+  margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+  .feedList {
+    scrollbar-width: none;
+  }
+}

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import ModalOverlay from "../modal-overlay/modal-overlay";
 import styles from "./modal.module.css";
 import { CloseIcon } from "@ya.praktikum/react-developer-burger-ui-components";
+import useMediaQuery from "../../hooks/useMedia";
 
 const modalRoot = document.getElementById("modal-root")!;
 
@@ -14,6 +15,8 @@ type TModalProps = {
 };
 
 const Modal = ({ title, onClose, titleStyle = "main", children }: TModalProps): React.JSX.Element => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -24,7 +27,9 @@ const Modal = ({ title, onClose, titleStyle = "main", children }: TModalProps): 
 
   return ReactDOM.createPortal(
     <>
+    { !isMobile && (
       <ModalOverlay onClose={onClose} data-test='modal-overlay'/>
+    )}
       <div className={styles.content} onClick={(e) => e.stopPropagation()} data-test='modal'>
         <header className={styles.header}>
           {titleStyle === "none" ? (

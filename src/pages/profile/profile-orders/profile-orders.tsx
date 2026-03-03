@@ -7,12 +7,14 @@ import { TIngredientProps } from "../../../utils/types/ingredient-types";
  import styles from './profile-orders.module.css'
  import { OrderCard } from "../../../components/order-card/order-card";
 import { profileOrderActions } from "../../../services/slices/profile-orders-slice";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import useMediaQuery from "../../../hooks/useMedia";
 
 export function ProfileOrders() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useMediaQuery('(max-width: 768px)')
 
   const allIngredients = useSelector(
     (state) => state.ingredients.items
@@ -56,6 +58,11 @@ export function ProfileOrders() {
   return (
     <main className={styles.page}>
       <section className={styles.feedSection}>
+        {isMobile && (
+          <h2 className={`${styles.mobileTitle} text text_type_main-large`}>
+          История заказов
+        </h2>
+        )}
         <ul className={styles.feedList}>
           {ordersWithDetails.map(order => (
             <li className={styles.card} key={order.number}>

@@ -27,12 +27,14 @@ import { ProfileOrders } from '../../pages/profile/profile-orders/profile-orders
 import { OrderModalContent } from '../wsorder-content/wsorder-content';
 import { OrderDetailPage } from '../../pages/order-details/order-details';
 import { useOrderFromWs } from '../../hooks/useOrderFromWs';
+import useMediaQuery from '../../hooks/useMedia';
 
 
 function App(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const background = location.state?.background;
 
@@ -66,17 +68,21 @@ function App(): React.JSX.Element {
 
       <Routes location={background || location}>
         <Route path='/' element={<Home />} />
+     {!isMobile ? (
         <Route path="/profile" element={<Protected component={<ProfileLayout />} />}>
           <Route index element={<ProfilePage />} />
           <Route path="orders" element={<Protected component={<ProfileOrders />} />} />
         </Route>
-        <Route
-          path="/profile/orders/:id"
-          element={
-            <Protected component={
-              <OrderDetailPage wsOrders={profileOrders} allIngredients={allIngredients} />
-            } />
-          } />
+      ) : (
+        <>
+          <Route path="/profile" element={<Protected component={<ProfilePage />} />} />
+          <Route
+            path="/profile/orders"
+            element={<Protected component={<ProfileOrders />} />}
+          />
+        </>
+      )}
+
 
 
         <Route path='/register' element={<Protected onlyUnAuth component={<Register />} />} />
@@ -99,7 +105,7 @@ function App(): React.JSX.Element {
           <Route
             path='/ingredients/:ingredientId'
             element={
-              <Modal onClose={handleCloseModal} title='Детали ингредиента' titleStyle='main'>
+              <Modal onClose={handleCloseModal} title={isMobile ? undefined : 'Детали ингредиента'} titleStyle='main'>
                 <IngredientDetails ingredient={ingredient} />
               </Modal>
             }

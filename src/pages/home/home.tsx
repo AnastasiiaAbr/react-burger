@@ -2,7 +2,6 @@ import styles from './home.module.css';
 import BurgerConstructor from '../../components/burger-constructor/burger-constructor';
 import BurgerIngredients from '../../components/burger-ingredients/burger-ingredients';
 import useMediaQuery from '../../hooks/useMedia';
-
 function Home(): React.JSX.Element {
   const isMobile = useMediaQuery('(max-width: 768px)');
 

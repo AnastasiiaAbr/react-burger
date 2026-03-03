@@ -10,6 +10,7 @@
   top: 0;
   background-color: white;
   z-index: 10;
+  width: 100%
 }
 
 .scrollArea {
@@ -31,4 +32,27 @@
 .counter {
   top: 8px;
   right: 8px;
+}
+
+@media (max-width: 768px) {
+  .categoryItems {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tabs >* {
+    width: 33%;
+  }
+
+  .bottomMobile {
+    position: fixed;
+    background-color: #1C1C21;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-around;
+    padding: 16px 8px;
+  }
 }
