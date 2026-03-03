@@ -5,19 +5,22 @@ import { Link, useNavigate } from 'react-router-dom';
 import { request } from '../../utils/request';
 import { API } from '../../utils/api';
 import { useForm } from '../../hooks/useForm';
+import useMediaQuery from '../../hooks/useMedia';
 
 const ResetPassword = (): React.JSX.Element => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const {values, handleChange} = useForm({
+  const { values, handleChange } = useForm({
     password: '',
     code: ''
-  })
+  });
+
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   useEffect(() => {
     const canAccess = localStorage.getItem('RESET_PASSWORD');
     if (!canAccess) {
-      navigate('/forgot-password', {replace: true});
+      navigate('/forgot-password', { replace: true });
     }
   }, [navigate])
 
@@ -57,24 +60,31 @@ const ResetPassword = (): React.JSX.Element => {
   return (
     <>
       <div className={styles.container}>
-        <p className="text text_type_main-medium">Восстановление пароля</p>
+        <p className={`text ${isMobile ? 'text_type_main-large' : 'text_type_main-medium'
+          }`}>Восстановление пароля</p>
         <form className={styles.form} onSubmit={handleSubmit}>
-          <PasswordInput
-            name='password'
-            placeholder="Введите новый пароль"
-            value={values.password}
-            onChange={handleChange}
-          />
-          <Input
-            name='code'
-            placeholder='Введите код из письма'
-            value={values.code}
-            onChange={handleChange}
-            {...({} as any)}
-          />
-          <Button htmlType="submit" type="primary" size='medium'>Сохранить</Button>
-          <p className={`text text_type_main-default text_color_inactive ${styles.text}`}>Вспомнили пароль?
-            <Link to='/login'> Войти</Link></p>
+          <div className={styles.inputWrapper}>
+            <PasswordInput
+              name='password'
+              placeholder="Введите новый пароль"
+              value={values.password}
+              onChange={handleChange}
+              size={isMobile ? 'small' : 'default'}
+            />
+            </div>
+            <div className={styles.inputWrapper}>
+            <Input
+              name='code'
+              placeholder='Введите код из письма'
+              value={values.code}
+              onChange={handleChange}
+              size={isMobile ? 'small' : 'default'}
+              {...({} as any)}
+            />
+            </div>
+            <Button htmlType="submit" type="primary" size={isMobile ? 'small' : 'medium'}>Сохранить</Button>
+            <p className={`text text_type_main-default text_color_inactive ${styles.text}`}>Вспомнили пароль?
+              <Link to='/login'> Войти</Link></p>
         </form>
       </div>
     </>

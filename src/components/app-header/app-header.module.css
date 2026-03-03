@@ -25,3 +25,94 @@ nav {
   align-items: center;
   text-decoration: none;
 }
+
+.header {
+  background-color: #1C1C21;
+}
+
+
+.headerSmall {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 8px;
+}
+
+.mobileMenu {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  display: flex;
+  background-color: #1C1C21;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.navLink {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 14px 8px;
+  gap: 8px;
+}
+
+.mobileMenu a {
+  color: #8585AD;
+}
+
+.menuTitle {
+  color: #F2F2F3;
+}
+
+.activeLink {
+  color: #F2F2F3;
+  cursor: pointer;
+}
+
+.defaultLink {
+  color: #8585AD;
+}
+
+.navProfile {
+  display: flex;
+  padding: 12px 8px;
+  justify-content: space-between;
+  width: 95%;
+  flex-direction: column;
+}
+
+.profileLink {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.arrowButton {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.profileDropdown {
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
+}
+
+.profileRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profileList {
+  margin: 10px 0;
+}

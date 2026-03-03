@@ -1,52 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSelector, useAppDispatch } from "../../services/store";
-import { Tab, CurrencyIcon, Counter } from "@ya.praktikum/react-developer-burger-ui-components";
+import { Button, CurrencyIcon, Tab,  } from "@ya.praktikum/react-developer-burger-ui-components";
 import styles from './burger-ingredients.module.css';
-import { useDrag } from "react-dnd";
+import IngredientCard from "../ingredient-card/ingredient-card";
 
 import { selectIngredient } from '../../services/slices/ingredients-slice';
 import { setBun, addFilling, selectConstructorFillings, selectConstructorBun } from "../../services/slices/constructor-slice";
-import { selectIngredientDetails, setIngredient, clearIngredient } from "../../services/slices/ingredient-details-slice";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { setIngredient } from "../../services/slices/ingredient-details-slice";
 import { TIngredientProps } from "../../utils/types/ingredient-types";
-
-type TIngredientCardProps = {
-  ingredient: TIngredientProps;
-  count: number;
-  onClick: (ingredient: TIngredientProps) => void;
-}
-
-function IngredientCard({ ingredient, count = 0, onClick }: TIngredientCardProps): React.JSX.Element {
-  const location = useLocation();
-
-  const [{ isDragging }, dragRef] = useDrag<TIngredientProps, unknown, { isDragging: boolean }>({
-    type: 'ingredient',
-    item: ingredient,
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    })
-  });
-  return (
-    <div ref={dragRef as unknown as React.Ref<HTMLDivElement>}
-    data-test='ingredient-card-draggable'>
-      <Link
-        to={`/ingredients/${ingredient._id}`}
-        state={{ background: location }}
-      >
-        <div className={styles.card}
-          onClick={() => onClick(ingredient)}
-          data-test='ingredient-card'
-          data-test-type={ingredient.type}
-          data-id={ingredient._id}>
-          {count > 0 && <Counter count={count} size='default' data-test='ingredient-counter'/>}
-          <img src={ingredient.image} alt={ingredient.name} />
-          <p className="text text_type_main-medium">{ingredient.price} <CurrencyIcon type="primary" /></p>
-          <p className="text text_type_main-default">{ingredient.name}</p>
-        </div>
-      </Link>
-    </div>
-  )
-};
+import useMediaQuery from "../../hooks/useMedia";
+import { useMemo } from "react";
 
 type TIngredientCategoryProps = {
   title: string;
@@ -55,12 +18,15 @@ type TIngredientCategoryProps = {
   bun: TIngredientProps | null;
   fillings: TIngredientProps[];
   onIngredientClick: (ingredient: TIngredientProps) => void;
+  onAddIngredient: (ingredient: TIngredientProps) => void;
 };
 
-function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredientClick }: TIngredientCategoryProps): React.JSX.Element {
+function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredientClick, onAddIngredient }: TIngredientCategoryProps): React.JSX.Element {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  
   return (
     <div className={styles.category} ref={innerRef}>
-      <h2 className="text text_type_main-large">{title}</h2>
+      <h2 className={`text ${isMobile ? 'text_type_main-medium' : 'text_type_main-large'}`}>{title}</h2>
       <div className={styles.categoryItems}>
         {items.map(item => {
           let count = 0;
@@ -77,7 +43,8 @@ function IngredientCategory({ title, items, innerRef, bun, fillings, onIngredien
               key={item._id}
               ingredient={item}
               count={count}
-              onClick={onIngredientClick} />
+              onClick={onIngredientClick}
+              onAdd={onAddIngredient} />
           );
         })}
       </div>
@@ -91,6 +58,7 @@ export default function BurgerIngredients(): React.JSX.Element {
   const ingredients = useSelector(selectIngredient) as TIngredientProps[];
   const bun = useSelector(selectConstructorBun);
   const fillings = useSelector(selectConstructorFillings);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
 
   const [currentTab, setCurrentTab] = useState('bun');
@@ -138,12 +106,24 @@ export default function BurgerIngredients(): React.JSX.Element {
 
   const handleIngredientClick = (ingredient: TIngredientProps) => {
     dispatch(setIngredient(ingredient));
+ //   if (ingredient.type === 'bun') {
+   //   dispatch(setBun(ingredient));
+    //} else {
+   //   dispatch(addFilling(ingredient));
+   // };
+  };
+
+  const handleAddIngredient = (ingredient: TIngredientProps) => {
     if (ingredient.type === 'bun') {
       dispatch(setBun(ingredient));
     } else {
       dispatch(addFilling(ingredient));
-    };
-  };
+    }
+  }
+
+    const totalPrice = useMemo<number>(() => {
+      return (bun ? bun.price * 2 : 0) + fillings.reduce((sum: number, item: TIngredientProps) => sum + item.price, 0);
+    }, [bun, fillings]);
 
   return (
     <>
@@ -157,10 +137,42 @@ export default function BurgerIngredients(): React.JSX.Element {
 
 
         <div className={`${styles.scrollArea} mt-10`} ref={scrollRef}>
-          <IngredientCategory title='Булки' items={buns} innerRef={bunRef} bun={bun} fillings={fillings} onIngredientClick={handleIngredientClick} />
-          <IngredientCategory title='Соусы' items={sauces} innerRef={sauceRef} bun={bun} fillings={fillings} onIngredientClick={handleIngredientClick} />
-          <IngredientCategory title='Начинки' items={mains} innerRef={mainRef} bun={bun} fillings={fillings} onIngredientClick={handleIngredientClick} />
+          <IngredientCategory
+            title='Булки'
+            items={buns}
+            innerRef={bunRef}
+            bun={bun}
+            fillings={fillings}
+            onIngredientClick={handleIngredientClick}
+            onAddIngredient={handleAddIngredient}
+          />
+          <IngredientCategory
+            title='Соусы'
+            items={sauces}
+            innerRef={sauceRef}
+            bun={bun}
+            fillings={fillings}
+            onIngredientClick={handleIngredientClick}
+            onAddIngredient={handleAddIngredient} />
+          <IngredientCategory
+            title='Начинки'
+            items={mains}
+            innerRef={mainRef}
+            bun={bun}
+            fillings={fillings}
+            onIngredientClick={handleIngredientClick}
+            onAddIngredient={handleAddIngredient} />
         </div>
+
+        {isMobile && (
+          <div className={styles.bottomMobile}>
+            <p className="text text_type_digits-default"> {totalPrice} <CurrencyIcon type='primary'/></p>
+            <Button
+            htmlType="button"
+            onClick={() => {}}
+            >Смотреть заказ</Button>
+          </div>
+        )}
       </div >
     </>
   );

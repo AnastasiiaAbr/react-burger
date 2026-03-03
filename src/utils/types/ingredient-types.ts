@@ -5,6 +5,7 @@ export type TIngredientProps = {
   price: number;
   image: string;
   image_large: string;
+  image_mobile: string;
   calories: number;
   proteins: number;
   fat: number;

@@ -1,7 +1,6 @@
 .form {
   display: flex;
   flex-direction: column;
-  width: 480px;
 }
 
 .form> :nth-child(2) {
@@ -18,4 +17,37 @@
 
 .cancelText {
   color: #4C4CFF;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobileTitle {
+  text-align: center;
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .form {
+    margin: 24px auto 0;
+  }
+
+  .changeContainer {
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .inputWrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .inputWrapper :global(.input) {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
 }
